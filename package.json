@@ -1,0 +1,5 @@
+{
+  "name": "jasa-tiket-murah-web-revamp",
+  "private": true,
+  "scripts": { "build": "node scripts/build.mjs" }
+}
