@@ -50,3 +50,36 @@ const clearSearchSession=()=>{sessionStorage.removeItem('jtm-last-search');sessi
 const resetSearchIdleTimer=()=>{clearTimeout(idleSearchTimer);idleSearchTimer=setTimeout(clearSearchSession,30000)};
 if(searchForm){searchForm.querySelectorAll('input,select,button').forEach(control=>['input','change','focus','click'].forEach(eventName=>control.addEventListener(eventName,resetSearchIdleTimer)));searchForm.addEventListener('submit',()=>{sessionStorage.setItem('jtm-last-search',JSON.stringify({origin:document.querySelector('#origin')?.value||'',destination:document.querySelector('#destination')?.value||'',travelDate:document.querySelector('#travel-date')?.value||'',savedAt:Date.now()}));const notice=document.querySelector('#search-feedback');if(notice)notice.dataset.searchState='stored';resetSearchIdleTimer()});resetSearchIdleTimer()}
 window.addEventListener('pagehide',clearSearchSession);
+
+// Local airport catalogue for the first search experience. The production gateway
+// will replace this with its supplier-backed airport index.
+const airportCatalogue=[
+  {code:'CGK',city:'Jakarta',name:'Soekarno-Hatta International Airport'},
+  {code:'HLP',city:'Jakarta',name:'Halim Perdanakusuma International Airport'},
+  {code:'DPS',city:'Denpasar',name:'I Gusti Ngurah Rai International Airport'},
+  {code:'SUB',city:'Surabaya',name:'Juanda International Airport'},
+  {code:'KNO',city:'Medan',name:'Kualanamu International Airport'},
+  {code:'YIA',city:'Yogyakarta',name:'Yogyakarta International Airport'},
+  {code:'SIN',city:'Singapore',name:'Singapore Changi Airport'},
+  {code:'KUL',city:'Kuala Lumpur',name:'Kuala Lumpur International Airport'},
+  {code:'BKK',city:'Bangkok',name:'Suvarnabhumi Airport'},
+  {code:'NRT',city:'Tokyo',name:'Narita International Airport'},
+  {code:'ICN',city:'Seoul',name:'Incheon International Airport'},
+  {code:'SYD',city:'Sydney',name:'Sydney Kingsford Smith Airport'}
+];
+const airportValue=airport=>`${airport.city} (${airport.code})`;
+const airportMatch=value=>airportCatalogue.find(airport=>airportValue(airport).toLowerCase()===value.trim().toLowerCase());
+if(searchForm){
+  [document.querySelector('#origin'),document.querySelector('#destination')].forEach(input=>{
+    if(!input)return;input.setAttribute('autocomplete','off');const list=document.createElement('div');list.className='airport-suggestions';list.hidden=true;input.parentElement.appendChild(list);
+    const render=()=>{const term=input.value.trim().toLowerCase();const matches=airportCatalogue.filter(airport=>`${airport.code} ${airport.city} ${airport.name}`.toLowerCase().includes(term)).slice(0,6);list.innerHTML=matches.map(airport=>`<button type="button" data-airport="${airport.code}"><b>${airport.city} (${airport.code})</b><small>${airport.name}</small></button>`).join('');list.hidden=!matches.length};
+    input.addEventListener('input',render);input.addEventListener('focus',render);input.addEventListener('blur',()=>setTimeout(()=>list.hidden=true,140));list.addEventListener('click',event=>{const button=event.target.closest('[data-airport]');if(!button)return;const airport=airportCatalogue.find(item=>item.code===button.dataset.airport);input.value=airportValue(airport);list.hidden=true;input.dispatchEvent(new Event('change',{bubbles:true}))});
+  });
+  searchForm.addEventListener('submit',event=>{const origin=airportMatch(document.querySelector('#origin')?.value||'');const destination=airportMatch(document.querySelector('#destination')?.value||'');const feedback=document.querySelector('#search-feedback');if(!origin||!destination){event.preventDefault();feedback.textContent='Pilih bandara dari daftar saran agar rute dapat divalidasi.';return}if(origin.code===destination.code){event.preventDefault();feedback.textContent='Bandara keberangkatan dan tujuan harus berbeda.';return}event.preventDefault();const query=new URLSearchParams({from:origin.code,to:destination.code,date:document.querySelector('#travel-date')?.value||''});window.location.href=`/results/?${query.toString()}`});
+}
+const resultRoot=document.querySelector('#flight-results');
+if(resultRoot){
+  const query=new URLSearchParams(location.search);const from=query.get('from')||'CGK',to=query.get('to')||'DPS';const samples=[{airline:'Garuda Indonesia',code:'GA',time:'07:10 – 10:05',duration:'1j 55m',stops:0,price:1425000},{airline:'Batik Air',code:'ID',time:'09:20 – 12:15',duration:'1j 55m',stops:0,price:1189000},{airline:'Singapore Airlines',code:'SQ',time:'12:15 – 20:10',duration:'6j 55m',stops:1,price:2099000}];
+  const renderResults=()=>{const direct=document.querySelector('#filter-direct')?.checked;const ordered=[...samples].filter(item=>!direct||item.stops===0).sort((a,b)=>document.querySelector('#sort-results')?.value==='price-desc'?b.price-a.price:a.price-b.price);resultRoot.innerHTML=ordered.map(item=>`<article class="flight-result"><div><b>${item.airline}</b><small>${item.code} · Economy</small></div><div><b>${item.time}</b><small>${from} → ${to} · ${item.duration}</small></div><div><small>${item.stops===0?'Langsung':'1 transit'}</small></div><div class="result-price"><b>Rp${item.price.toLocaleString('id-ID')}</b><button type="button">Pilih</button></div></article>`).join('')||'<p>Tidak ada penerbangan yang cocok dengan filter Anda.</p>'};
+  document.querySelector('#result-route').textContent=`${from} ke ${to}`;document.querySelectorAll('#filter-direct,#sort-results').forEach(control=>control.addEventListener('change',renderResults));renderResults();
+}
