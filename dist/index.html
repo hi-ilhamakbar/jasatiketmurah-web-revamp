@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="JasaTiketMurah membantu pemesanan tiket pesawat, hotel, tour, visa, dan transfer untuk perjalanan domestik maupun internasional." />
+    <meta name="theme-color" content="#0D1B2A" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://jasatiketmurah.com/" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="preload" href="assets/hero-travel.png" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>JasaTiketMurah.com | Flight, Hotel, Tour & Visa</title>
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"TravelAgency","name":"JasaTiketMurah.com","url":"https://jasatiketmurah.com/","email":"cs@jasatiketmurah.com","description":"Travel services for flights, hotels, tours, visas, and transfers."}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#booking">Langsung ke pencarian</a>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="JasaTiketMurah homepage"><img src="assets/logo.png" alt="JasaTiketMurah.com" /></a>
+      <button class="menu-toggle" aria-label="Buka menu" aria-expanded="false">☰</button>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <a href="#booking">Pesan</a><a href="#destinations">Inspirasi</a><a href="#why-us">Tentang kami</a><a href="#contact">Hubungi kami</a>
+      </nav>
+      <div class="header-actions"><a href="#contact" class="help-link">Bantuan 24/7</a><button class="account-btn">Masuk <span>→</span></button></div>
+    </header>
+
+    <main id="home">
+      <section class="hero" aria-label="Mulai perjalanan Anda">
+        <div class="hero-image" role="img" aria-label="Pesawat terbang di atas kepulauan Indonesia saat matahari terbit"></div>
+        <div class="hero-copy wrap">
+          <p class="eyebrow light">TRAVEL, MADE PERSONAL</p>
+          <h1>Perjalanan yang terasa <em>lebih mudah.</em></h1>
+          <p>Rencanakan tiket, hotel, dan pengalaman yang tepat untuk perjalanan Anda—dengan bantuan manusia saat Anda membutuhkannya.</p>
+        </div>
+      </section>
+
+      <section id="booking" class="booking-wrap wrap" aria-labelledby="booking-title">
+        <div class="booking-panel">
+          <div class="booking-head"><div><p class="eyebrow">MULAI DARI SINI</p><h2 id="booking-title">Mau ke mana hari ini?</h2></div><p class="availability"><i></i> Dukungan perjalanan tersedia</p></div>
+          <div class="service-tabs" role="tablist" aria-label="Pilihan layanan">
+            <button class="service-tab active" role="tab" aria-selected="true" data-service="flight"><span class="icon">✈</span>Penerbangan</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="hotel"><span class="icon">⌂</span>Hotel</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="tour"><span class="icon">◈</span>Tour & aktivitas</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="visa"><span class="icon">▣</span>Visa</button>
+          </div>
+          <form id="search-form" class="search-form">
+            <label><span id="origin-label">Dari</span><input id="origin" required value="Jakarta (CGK)" aria-label="Kota keberangkatan" /></label>
+            <button type="button" class="swap" aria-label="Tukar asal dan tujuan">⇄</button>
+            <label><span id="destination-label">Ke</span><input id="destination" required placeholder="Pilih tujuan" aria-label="Tujuan" /></label>
+            <label><span>Tanggal</span><input id="travel-date" type="date" required aria-label="Tanggal perjalanan" /></label>
+            <label><span>Penumpang</span><select aria-label="Jumlah penumpang"><option>1 dewasa</option><option>2 dewasa</option><option>Keluarga</option></select></label>
+            <button class="primary-button" type="submit">Cari <span>→</span></button>
+          </form>
+          <p id="search-feedback" class="form-feedback" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="trust-strip wrap" aria-label="Keunggulan JasaTiketMurah">
+        <div><b>15+ tahun</b><span>Melayani perjalanan</span></div><div><b>Domestik & global</b><span>Dalam satu tempat</span></div><div><b>Harga transparan</b><span>Tanpa kejutan di akhir</span></div><div><b>Tim yang siap bantu</b><span>Sebelum dan sesudah berangkat</span></div>
+      </section>
+
+      <section id="destinations" class="destinations wrap">
+        <div class="section-heading"><div><p class="eyebrow">CURATED FOR YOU</p><h2>Temukan alasan baru untuk pergi.</h2></div><a href="#booking">Lihat semua tujuan <span>→</span></a></div>
+        <div class="destination-grid">
+          <article class="destination feature"><div class="place-number">01</div><div class="destination-copy"><p>Indonesia</p><h3>Ruang untuk kembali terhubung.</h3><a href="#booking">Jelajahi Indonesia <span>↗</span></a></div></article>
+          <article class="destination japan"><div class="place-number">02</div><div class="destination-copy"><p>Asia</p><h3>Musim yang selalu berubah.</h3><a href="#booking">Jelajahi Asia <span>↗</span></a></div></article>
+          <article class="destination europe"><div class="place-number">03</div><div class="destination-copy"><p>Eropa</p><h3>Waktu yang berjalan pelan.</h3><a href="#booking">Jelajahi Eropa <span>↗</span></a></div></article>
+        </div>
+      </section>
+
+      <section id="why-us" class="why-us"><div class="wrap why-grid"><div><p class="eyebrow gold">TRAVEL WITH CLARITY</p><h2>Yang Anda butuhkan, tanpa yang berlebihan.</h2><p class="lead">Dari pemesanan sederhana sampai perjalanan dengan banyak detail, kami membuat prosesnya jelas dan tetap personal.</p></div><div class="benefit-list"><article><span>01</span><div><h3>Nilai terbaik, dipilih dengan teliti</h3><p>Kami membandingkan opsi yang relevan agar Anda bisa memilih dengan yakin.</p></div></article><article><span>02</span><div><h3>Dibantu oleh orang yang mengerti perjalanan</h3><p>Tim kami membantu saat rencana berubah, bukan hanya saat pesanan dibuat.</p></div></article><article><span>03</span><div><h3>Satu partner untuk seluruh perjalanan</h3><p>Tiket pesawat, hotel, tur, visa, hingga transfer tersusun dalam satu alur.</p></div></article></div></div></section>
+
+      <section id="contact" class="contact wrap" aria-labelledby="contact-title"><div class="contact-intro"><p class="eyebrow">HUBUNGI KAMI</p><h2 id="contact-title">Kami senang mendengar dari Anda.</h2><p>Butuh bantuan dengan pesanan, punya saran, atau ingin merencanakan perjalanan berikutnya? Kirimkan pesan Anda.</p><a href="mailto:cs@jasatiketmurah.com">cs@jasatiketmurah.com</a></div><form id="contact-form" class="contact-form"><div class="field-grid"><label>Nama lengkap<input name="name" required autocomplete="name" /></label><label>Email<input name="email" type="email" required autocomplete="email" /></label><label>No. kontak<div class="phone-input"><select name="country" aria-label="Kode negara"><option value="+62">🇮🇩 +62</option><option value="+65">🇸🇬 +65</option><option value="+60">🇲🇾 +60</option><option value="+1">🇺🇸 +1</option></select><input name="phone" type="tel" required autocomplete="tel" placeholder="812 0000 0000" /></div></label><label>Topik<select name="topic" required><option value="">Pilih topik</option><option>Saran</option><option>Kritik</option><option>Apresiasi</option><option>Bantuan pesanan</option><option>Lainnya</option></select></label></div><label>Nomor pemesanan <small>(opsional)</small><input name="order" placeholder="JTMF1234567890 atau JTMH1234567890" pattern="JTM[FHATV][0-9]{10}" /></label><label>Subjek<input name="subject" required /></label><label>Pesan<textarea name="message" required rows="5"></textarea></label><div class="captcha-row"><label id="captcha-label">Memuat verifikasi…<input id="captcha" inputmode="numeric" required aria-label="Jawaban verifikasi angka" /></label><button class="primary-button" type="submit">Kirim pesan <span>→</span></button></div><p id="contact-feedback" class="form-feedback" aria-live="polite"></p></form></section>
+    </main>
+    <footer><div class="wrap footer-grid"><div><img class="footer-logo" src="assets/logo.png" alt="JasaTiketMurah.com" /><p>Flight · Hotel · Tour · Visa · Transfer</p></div><div><h3>Jelajahi</h3><a href="#booking">Penerbangan</a><a href="#booking">Hotel</a><a href="#booking">Tour & aktivitas</a><a href="#booking">Visa</a></div><div><h3>Perusahaan</h3><a href="#why-us">Tentang kami</a><a href="#contact">Hubungi kami</a><a href="#">Syarat & ketentuan</a><a href="#">Kebijakan privasi</a></div><div><h3>Bantuan</h3><a href="mailto:cs@jasatiketmurah.com">cs@jasatiketmurah.com</a><a href="#contact">Pusat bantuan</a><p class="footer-note">Senin–Minggu<br/>Dukungan perjalanan</p></div></div><div class="wrap copyright">Copyright © 2011-<span id="year"></span> JasaTiketMurah.com by PT Shiro Xpress International. All rights reserved.</div></footer>
+    <script src="script.js"></script>
+  </body>
+</html>
