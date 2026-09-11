@@ -1504,7 +1504,10 @@ const pageCopy = {
   requestSending: 'Sending your request…',
   requestSent: 'Your request has been sent. A copy has been sent to your email address.',
   requestUnavailable: 'Your request has been saved. Email service is unavailable; our team will follow up.',
-  verificationIncorrect: 'The verification answer is not correct.'
+  verificationIncorrect: 'The verification answer is not correct.',
+  backToResults: '← Back to results', checkoutTitle: 'Complete your order', checkoutChoice: 'How would you like to continue?', guestBooking: 'Continue as guest', memberBooking: 'Sign in as a member', paymentMethod: 'Payment method', bankTransfer: 'Bank transfer', cardPayment: 'Credit/debit card', password: 'Account password', continuePayment: 'Continue to payment', orderSummary: 'Order summary', flightLabel: 'Flight', passengersLabel: 'Passengers', totalPayment: 'Total payment',
+  resultsTitle: 'Choose your flight', changeSearch: '← Change search', filter: 'Filter', includedTaxes: 'Price includes estimated taxes', sort: 'Sort', lowestPrice: 'Lowest price', highestPrice: 'Highest price',
+  multiCityTitle: 'Plan a multi-city flight', multiCityIntro: 'Add up to four travel routes.', routeFrom: 'Route {number}: From', addRoute: '+ Add route', searchFlights: 'Search flights'
 };
 
 Object.values(translationCatalogue).forEach(locale => Object.assign(locale, pageCopy));
@@ -1512,7 +1515,9 @@ Object.assign(translationCatalogue.id, {
   charterIntro: 'Atur perjalanan privat domestik maupun internasional dengan jadwal yang fleksibel. Kirim detail kebutuhan Anda, dan tim charter kami akan menghubungi Anda.',
   tripType: 'Jenis perjalanan', pax: 'Jumlah pax', specialRequest: 'Permintaan khusus', optional: '(opsional)',
   specialRequestPlaceholder: 'Contoh: kebutuhan catering, bagasi, atau jadwal pilihan', requestSubmit: 'Kirim permintaan charter',
-  groupBookingCta: 'Ingin melakukan group booking lebih dari 10 orang? Bisa. Yuk klik di sini.', requestSending: 'Mengirim request Anda…', requestSent: 'Request terkirim. Salinan email telah dikirim ke alamat Anda.', requestUnavailable: 'Request tersimpan. Layanan email sedang tidak tersedia; tim charter akan menindaklanjuti.', verificationIncorrect: 'Jawaban verifikasi belum tepat.'
+  groupBookingCta: 'Ingin melakukan group booking lebih dari 10 orang? Bisa. Yuk klik di sini.', requestSending: 'Mengirim request Anda…', requestSent: 'Request terkirim. Salinan email telah dikirim ke alamat Anda.', requestUnavailable: 'Request tersimpan. Layanan email sedang tidak tersedia; tim charter akan menindaklanjuti.', verificationIncorrect: 'Jawaban verifikasi belum tepat.',
+  backToResults: '← Kembali ke hasil', checkoutTitle: 'Lengkapi pesanan Anda', checkoutChoice: 'Bagaimana Anda ingin melanjutkan?', guestBooking: 'Lanjut sebagai tamu', memberBooking: 'Masuk sebagai member', paymentMethod: 'Metode pembayaran', bankTransfer: 'Transfer bank', cardPayment: 'Kartu kredit/debit', password: 'Kata sandi akun', continuePayment: 'Lanjutkan ke pembayaran', orderSummary: 'Ringkasan pesanan', flightLabel: 'Penerbangan', passengersLabel: 'Penumpang', totalPayment: 'Total pembayaran',
+  resultsTitle: 'Pilih penerbangan Anda', changeSearch: '← Ubah pencarian', filter: 'Filter', includedTaxes: 'Harga sudah termasuk estimasi pajak', sort: 'Urutkan', lowestPrice: 'Harga terendah', highestPrice: 'Harga tertinggi', multiCityTitle: 'Rencanakan penerbangan multi-kota', multiCityIntro: 'Tambahkan hingga empat rute perjalanan.', routeFrom: 'Rute {number}: Dari', addRoute: '+ Tambah rute', searchFlights: 'Cari penerbangan'
 });
 Object.assign(translationCatalogue.ja, {charterTitle: 'プライベートジェットチャーター', charterIntro: '国内外のプライベートな旅を、お客様のスケジュールに合わせて手配します。ご希望をお送りいただければ、チャーターチームよりご連絡します。', tripType: '旅行タイプ', pax: '搭乗者数', specialRequest: '特別なご要望', optional: '（任意）', specialRequestPlaceholder: '例：機内食、手荷物、ご希望の時間', requestSubmit: 'チャーターを依頼', groupBookingCta: '10名を超える団体予約をご希望ですか？こちらをクリックしてください。'});
 Object.assign(translationCatalogue.ko, {charterTitle: '프라이빗 제트 전세', charterIntro: '원하시는 일정에 맞춰 국내외 프라이빗 여행을 준비하세요. 요청 사항을 보내주시면 전세팀이 연락드립니다.', tripType: '여행 유형', pax: '승객 수', specialRequest: '특별 요청', optional: '(선택 사항)', specialRequestPlaceholder: '예: 기내식, 수하물 또는 희망 일정', requestSubmit: '전세 요청', groupBookingCta: '10명 초과 단체 예약이 필요하신가요? 여기를 클릭하세요.'});
