@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /checkout/
+Disallow: /order-confirmation/
+Disallow: /results/
+Disallow: /api/
+
+Sitemap: https://jasatiketmurah.com/sitemap.xml
