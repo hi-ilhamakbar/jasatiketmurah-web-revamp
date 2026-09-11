@@ -1,1 +1,46 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Ajukan kebutuhan Private Jet Charter bersama Jasa Tiket Murah."><link rel="icon" href="/assets/favicon.png"><link rel="stylesheet" href="/styles.css"><title>Private Jet Charter | Jasa Tiket Murah</title></head><body><div id="site-header"></div><main class="page"><section class="wrap contact-layout"><div><h1>Private Jet Charter</h1><p class="page-lead">Atur perjalanan privat domestik maupun internasional dengan jadwal yang fleksibel. Kirim detail kebutuhan Anda, dan tim charter kami akan menghubungi Anda.</p><a class="email-link" href="mailto:cs@jasatiketmurah.com">cs@jasatiketmurah.com</a></div><form id="charter-form" class="contact-form"><div class="field-grid"><label>Nama lengkap<input name="name" required></label><label>Email<input name="email" type="email" required></label></div><div class="field-grid"><label>Dari<input name="origin" placeholder="Jakarta (CGK)" required></label><label>Ke<input name="destination" placeholder="Bali (DPS)" required></label></div><div class="field-grid"><label>Jenis perjalanan<select name="tripType"><option value="one-way">Sekali jalan</option><option value="return">Pulang-pergi</option></select></label><label>Jumlah pax<input name="pax" type="number" min="1" max="200" value="1" required></label></div><label>Tanggal pergi<input name="departureDate" type="date" required></label><label class="charter-return" hidden>Tanggal pulang<input name="returnDate" type="date"></label><label>Permintaan khusus <small>(opsional)</small><textarea name="request" rows="4" placeholder="Contoh: kebutuhan catering, bagasi, atau jadwal pilihan"></textarea></label><label id="charter-captcha-label">Verifikasi</label><input id="charter-captcha" inputmode="numeric" required><button class="primary-button" type="submit">Request</button><p id="charter-feedback" class="form-feedback"></p></form></section></main><div id="site-footer"></div><script src="/script.js"></script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Ajukan kebutuhan Private Jet Charter bersama Jasa Tiket Murah.">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Private Jet Charter | Jasa Tiket Murah</title>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="page">
+    <section class="wrap contact-layout">
+      <div>
+        <h1 data-i18n="charterTitle">Private Jet Charter</h1>
+        <p class="page-lead" data-i18n="charterIntro">Atur perjalanan privat domestik maupun internasional dengan jadwal yang fleksibel. Kirim detail kebutuhan Anda, dan tim charter kami akan menghubungi Anda.</p>
+        <a class="email-link" href="mailto:cs@jasatiketmurah.com">cs@jasatiketmurah.com</a>
+      </div>
+      <form id="charter-form" class="contact-form">
+        <div class="field-grid">
+          <label><span data-i18n="fullName">Nama lengkap</span><input name="name" required></label>
+          <label><span data-i18n="email">Email</span><input name="email" type="email" required></label>
+        </div>
+        <div class="field-grid">
+          <label><span data-i18n="from">Dari</span><input name="origin" placeholder="Jakarta (CGK)" required></label>
+          <label><span data-i18n="to">Ke</span><input name="destination" placeholder="Bali (DPS)" required></label>
+        </div>
+        <div class="field-grid">
+          <label><span data-i18n="tripType">Jenis perjalanan</span><select name="tripType"><option value="one-way" data-i18n="oneWay">Sekali jalan</option><option value="return" data-i18n="roundTrip">Pulang-pergi</option></select></label>
+          <label><span data-i18n="pax">Jumlah pax</span><input name="pax" type="number" min="1" max="200" value="1" required></label>
+        </div>
+        <label><span data-i18n="departure">Tanggal pergi</span><input name="departureDate" type="date" required></label>
+        <label class="charter-return" hidden><span data-i18n="return">Tanggal pulang</span><input name="returnDate" type="date"></label>
+        <label class="optional-label"><span><b data-i18n="specialRequest">Permintaan khusus</b> <small data-i18n="optional">(opsional)</small></span><textarea name="request" rows="4" data-i18n-placeholder="specialRequestPlaceholder" placeholder="Contoh: kebutuhan catering, bagasi, atau jadwal pilihan"></textarea></label>
+        <label id="charter-captcha-label" data-i18n="verification">Verifikasi</label>
+        <input id="charter-captcha" inputmode="numeric" required>
+        <button class="primary-button" type="submit" data-i18n="requestSubmit">Request</button>
+        <p id="charter-feedback" class="form-feedback"></p>
+      </form>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/script.js"></script>
+</body>
+</html>
