@@ -70,7 +70,7 @@ const translationCatalogue = {
 
     fullName: 'Nama lengkap',
     email: 'Email',
-    phone: 'No. kontak',
+    phone: 'Nomor kontak',
     topic: 'Topik',
     selectTopic: 'Pilih topik',
     suggestion: 'Saran',
