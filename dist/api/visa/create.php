@@ -18,6 +18,7 @@ $speed = $_POST['processingSpeed'] ?? 'normal';
 $quantity = max(1, min(10, (int) ($_POST['quantity'] ?? 1)));
 $name = trim((string) ($_POST['fullName'] ?? ''));
 $email = (string) ($_POST['email'] ?? '');
+$phoneCountry = trim((string) ($_POST['phoneCountry'] ?? ''));
 $phone = trim((string) ($_POST['phone'] ?? ''));
 $nationality = trim((string) ($_POST['nationality'] ?? ''));
 $prices = [
@@ -29,7 +30,7 @@ $prices = [
     'tourist-60-multiple' => 11400000,
 ];
 
-if (!isset($prices[$type]) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!isset($prices[$type]) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
@@ -84,7 +85,7 @@ foreach ($_FILES as $field => $upload) {
 $record = [
     'caseNumber' => $case, 'status' => 'SUBMITTED', 'country' => 'AE', 'visaType' => $type,
     'processingSpeed' => $speed, 'quantity' => $quantity, 'totalIDR' => $total, 'name' => $name,
-    'email' => $email, 'phone' => $phone, 'nationality' => $nationality, 'documents' => $savedFiles,
+    'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'documents' => $savedFiles,
     'createdAt' => gmdate('c'),
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
