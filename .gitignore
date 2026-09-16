@@ -1,0 +1,4 @@
+jtm-serpapi.php
+.env
+.env.*
+!.env.example

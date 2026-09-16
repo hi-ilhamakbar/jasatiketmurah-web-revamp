@@ -142,3 +142,9 @@ if(visaForm){
   quantity.addEventListener('change',()=>{if(type.value)renderVisaDocuments()});
   sync();
 }
+
+// Supplier integrations load after the static booking UI is ready.
+if (!document.querySelector('script[data-jtm-flight-search]')) {
+  const airports = document.createElement('script'); airports.src = '/airport-data.js'; airports.async = false; document.body.appendChild(airports);
+  const flights = document.createElement('script'); flights.src = '/flight-search-api.js'; flights.async = false; flights.dataset.jtmFlightSearch = 'true'; document.body.appendChild(flights);
+}
