@@ -142,3 +142,11 @@ if(visaForm){
   quantity.addEventListener('change',()=>{if(type.value)renderVisaDocuments()});
   sync();
 }
+
+// Loaded last so it can replace the demo flight flow with the server-side Sabre gateway.
+if (!document.querySelector('script[data-jtm-flight-api]')) {
+  const flightApi = document.createElement('script');
+  flightApi.src = '/flight-api.js';
+  flightApi.dataset.jtmFlightApi = 'true';
+  document.body.appendChild(flightApi);
+}
