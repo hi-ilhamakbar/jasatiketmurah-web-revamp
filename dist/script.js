@@ -149,3 +149,6 @@ if (!document.querySelector('script[data-jtm-flight-search]')) {
   const flights = document.createElement('script'); flights.src = '/flight-search-api.js'; flights.async = false; flights.dataset.jtmFlightSearch = 'true'; document.body.appendChild(flights);
   const checkout = document.createElement('script'); checkout.src = '/flight-checkout.js'; checkout.async = false; document.body.appendChild(checkout);
 }
+
+const flightDeparture=document.querySelector('#travel-date'),flightReturn=document.querySelector('#return-date');
+if(flightDeparture&&flightReturn){const syncFlightDates=()=>{flightReturn.min=flightDeparture.value||new Date().toISOString().slice(0,10);if(flightReturn.value&&flightReturn.value<flightReturn.min)flightReturn.value=flightReturn.min};flightDeparture.previousElementSibling&&(flightDeparture.previousElementSibling.textContent='Tanggal pergi');flightDeparture.addEventListener('input',syncFlightDates);flightDeparture.addEventListener('change',syncFlightDates);flightReturn.addEventListener('change',syncFlightDates);syncFlightDates();}
