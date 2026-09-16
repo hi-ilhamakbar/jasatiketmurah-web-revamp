@@ -1,7 +1,7 @@
 /* Sabre calls happen only through same-origin PHP endpoints: no supplier secret reaches a browser. */
 (() => {
   const api = '/api/flights';
-  const code = value => String(value || '').match(/\b([A-Za-z]{3})\b(?=\)?\s*$)/)?.[1]?.toUpperCase() || '';
+  const code = value => String(value || '').trim().match(/^([A-Za-z]{3})$|\b([A-Za-z]{3})\b(?=\)?\s*$)/)?.slice(1).find(Boolean)?.toUpperCase() || '';
   const money = (amount, currency = 'IDR') => new Intl.NumberFormat('id-ID', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Number(amount) || 0);
   const request = async (path, payload) => {
     const response = await fetch(`${api}/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });

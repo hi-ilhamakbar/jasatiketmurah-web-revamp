@@ -145,8 +145,13 @@ if(visaForm){
 
 // Loaded last so it can replace the demo flight flow with the server-side Sabre gateway.
 if (!document.querySelector('script[data-jtm-flight-api]')) {
+  const airportData = document.createElement('script');
+  airportData.src = '/airport-data.js';
+  airportData.async = false;
+  document.body.appendChild(airportData);
   const flightApi = document.createElement('script');
   flightApi.src = '/flight-api.js';
+  flightApi.async = false;
   flightApi.dataset.jtmFlightApi = 'true';
   document.body.appendChild(flightApi);
 }

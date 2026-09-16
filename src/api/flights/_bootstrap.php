@@ -38,7 +38,8 @@ function flight_env(string $name): string {
 }
 
 function flight_sabre_base_url(): string {
-    $base = rtrim(flight_env('SABRE_BASE_URL') ?: 'https://api.cert.platform.sabre.com', '/');
+    // Sabre's current certification OAuth host differs from the legacy platform host.
+    $base = rtrim(flight_env('SABRE_BASE_URL') ?: 'https://api-crt.cert.havail.sabre.com', '/');
     if (!filter_var($base, FILTER_VALIDATE_URL) || !str_starts_with($base, 'https://')) {
         flight_fail(500, 'Sabre service URL is not configured correctly.');
     }
@@ -52,12 +53,12 @@ function flight_sabre_token(): string {
     if (!function_exists('curl_init')) flight_fail(500, 'The server cannot connect to the flight supplier.');
 
     $request = curl_init(flight_sabre_base_url() . '/v2/auth/token');
+    // Sabre OAuth expects Base64(Base64(user-id):Base64(password)), not regular HTTP Basic credentials.
+    $authorization = base64_encode(base64_encode($id) . ':' . base64_encode($secret));
     curl_setopt_array($request, [
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => 'grant_type=client_credentials',
-        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded', 'Accept: application/json'],
-        CURLOPT_USERPWD => $id . ':' . $secret,
-        CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded', 'Accept: application/json', 'Authorization: Basic ' . $authorization],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 20,
         CURLOPT_CONNECTTIMEOUT => 10,
