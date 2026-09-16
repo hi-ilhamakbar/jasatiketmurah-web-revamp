@@ -15,3 +15,21 @@
   document.addEventListener('submit',event=>{if(event.target!==form)return;let first;const require=['firstName','lastName','gender','birthDate','nationality','email','emailConfirmation','phoneCountry','phone','consent'];require.forEach(name=>{const input=form.querySelector(`[name="${name}"]`);if(!input?.value||input.type==='checkbox'&&!input.checked){invalid(input,'Field ini wajib diisi.');first||=input}});if(birth.value&&birth.value>today){invalid(birth,'Tanggal lahir tidak boleh di masa depan.');first||=birth}const email=form.querySelector('[name="email"]'),confirm=form.querySelector('[name="emailConfirmation"]');if(email.value&&confirm.value&&email.value!==confirm.value){invalid(confirm,'Email verifikasi harus sama dengan email.');first||=confirm}if(first){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();first.focus()}},true);
   form.addEventListener('submit',async event=>{event.preventDefault();event.stopImmediatePropagation();const feedback=document.querySelector('#checkout-feedback'),button=form.querySelector('button[type=submit]'),fields=Object.fromEntries(new FormData(form));button.disabled=true;feedback.textContent='Mengirim permintaan…';try{const response=await fetch('/api/flights/submit.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...fields,route:document.querySelector('#checkout-route').textContent,price:document.querySelector('#checkout-total').textContent,airline:document.querySelector('#checkout-airline').textContent,date:document.querySelector('#checkout-date').textContent,passengers:document.querySelector('#checkout-passengers').textContent})}),data=await response.json().catch(()=>({}));if(!response.ok||!data.ok)throw new Error(data.message||'Permintaan tidak dapat dikirim.');sessionStorage.setItem('jtm-order',JSON.stringify({number:data.reference,customer:fields}));location.assign(`/order-confirmation/?order=${encodeURIComponent(data.reference)}`)}catch(error){feedback.textContent=error.message}finally{button.disabled=false}},true)
 })();
+
+// A return journey consists of two independently selected SerpApi itineraries.
+// Keep both visible at checkout, rather than reducing the confirmation to the outbound leg.
+(() => {
+  let choice; try { choice=JSON.parse(sessionStorage.getItem('jtm-flight-choice')||''); } catch {};
+  if (!choice?.returnFlight) return;
+  const clean = value => String(value||'').replace(/\b(Bandar Udara|Airport|Internasional|International)\b/gi,'').replace(/\s+/g,' ').trim();
+  const airport = leg => `${clean(leg.departure_airport?.name)} → ${clean(leg.arrival_airport?.name)}`;
+  const numbers = flight => [...new Set((flight.flights||[]).map(leg => `${leg.airline||''} ${leg.flight_number||''}`.trim()).filter(Boolean))].join(' · ');
+  const sector = (title, flight) => `<section class="checkout-sector"><b>${title}</b><p>${(flight.flights||[]).map(airport).join('<br>')}</p><small>${numbers(flight)}</small></section>`;
+  const style = '<style>.checkout-sector{padding:11px 0;border-top:1px solid #e2e8f0}.checkout-sector:first-child{border-top:0}.checkout-sector p{margin:5px 0;line-height:1.4}.checkout-sector small{color:#526b8e}</style>';
+  const aside=document.querySelector('.order-summary'),route=document.querySelector('#checkout-route');
+  if (!aside || !route) return;
+  route.textContent=`${choice.labels?.origin||choice.search.origin} → ${choice.labels?.destination||choice.search.destination} · pulang ${choice.labels?.destination||choice.search.destination} → ${choice.labels?.origin||choice.search.origin}`;
+  const details=document.createElement('div'); details.className='checkout-itineraries'; details.innerHTML=style+sector('Pergi',choice.flight)+sector('Pulang',choice.returnFlight); route.after(details);
+  document.querySelector('#checkout-airline').textContent=`${numbers(choice.flight)} · ${numbers(choice.returnFlight)}`;
+  document.querySelector('#checkout-date').textContent=`${new Intl.DateTimeFormat('id-ID',{dateStyle:'medium'}).format(new Date(`${choice.search.departure}T12:00:00`))} · pulang ${new Intl.DateTimeFormat('id-ID',{dateStyle:'medium'}).format(new Date(`${choice.search.return}T12:00:00`))}`;
+})();
