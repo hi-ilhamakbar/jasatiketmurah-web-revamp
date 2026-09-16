@@ -1,11 +1,11 @@
 /* Airport/city autocomplete. Data: lxndrblz/Airports, CC BY-SA 4.0. */
 (() => {
-  const overrides = { CGK: 'Soekarno-Hatta', HND: 'Tokyo', LAX: 'Los Angeles', SFO: 'San Francisco', VTE: 'Vientiane' };
+  const overrides = { BKK: 'Bangkok', CGK: 'Soekarno-Hatta', DMK: 'Bangkok', HND: 'Tokyo', LAX: 'Los Angeles', SFO: 'San Francisco', VTE: 'Vientiane' };
   const parse = line => { const out=[]; let value='',quoted=false; for(let i=0;i<line.length;i++){const char=line[i];if(char==='"'&&line[i+1]==='"'){value+=char;i++}else if(char==='"')quoted=!quoted;else if(char===','&&!quoted){out.push(value);value=''}else value+=char}out.push(value);return out };
   const cityName = (code, name, city) => overrides[code] || String(name || '').replace(/\s+(international\s+)?airport$/i, '').replace(/\s+airfield$/i, '').trim() || city || code;
   const safe = value => String(value || '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[char]);
   const load = async () => {
-    const form=document.querySelector('#search-form'); let csv; try{csv=await fetch('/assets/airports.csv',{cache:'force-cache'}).then(r=>r.ok?r.text():Promise.reject())}catch{return}
+    const form=document.querySelector('#search-form');form?.querySelectorAll('.airport-suggestions').forEach(node=>node.remove()); let csv; try{csv=await fetch('/assets/airports.csv',{cache:'force-cache'}).then(r=>r.ok?r.text():Promise.reject())}catch{return}
     const lines=csv.split(/\r?\n/), header=parse(lines.shift()).reduce((all,name,index)=>({...all,[name]:index}),{}), codes=new Map();
     lines.forEach(line=>{const row=parse(line),code=(row[header.code]||'').toUpperCase();if(!/^[A-Z]{3}$/.test(code)||codes.has(code))return;const item={code,city:cityName(code,row[header.name],row[header.city]),name:row[header.name]||'',country:row[header.country]||'',cityCode:row[header.city_code]||''};item.index=`${item.code} ${item.cityCode} ${item.city} ${item.name} ${item.country}`.toLocaleLowerCase();codes.set(code,item)});
     window.JTM_AIRPORTS={get:code=>codes.get(String(code||'').toUpperCase()),label:code=>{const a=codes.get(String(code||'').toUpperCase());return a?`${a.city} (${a.code})`:code}};window.dispatchEvent(new Event('jtm-airports-ready'));
