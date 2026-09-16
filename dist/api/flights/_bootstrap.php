@@ -16,8 +16,25 @@ function flight_input(): array {
     return is_array($body) ? $body : [];
 }
 
+function flight_secret_config(): array {
+    static $config;
+    if ($config !== null) return $config;
+    $config = [];
+    $documentRoot = realpath((string) ($_SERVER['DOCUMENT_ROOT'] ?? ''));
+    // In cPanel, document root is normally /home/<account>/public_html.
+    // This keeps the credentials in /home/<account>/jtm-sabre.php, outside the web root.
+    $file = $documentRoot ? dirname($documentRoot) . DIRECTORY_SEPARATOR . 'jtm-sabre.php' : '';
+    if ($file && is_file($file)) {
+        $loaded = require $file;
+        if (is_array($loaded)) $config = $loaded;
+    }
+    return $config;
+}
+
 function flight_env(string $name): string {
-    return trim((string) getenv($name));
+    $environment = getenv($name);
+    if ($environment !== false && trim((string) $environment) !== '') return trim((string) $environment);
+    return trim((string) (flight_secret_config()[$name] ?? ''));
 }
 
 function flight_sabre_base_url(): string {

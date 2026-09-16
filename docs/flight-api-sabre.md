@@ -4,13 +4,17 @@ The browser only calls `/api/flights/*.php`. Sabre credentials and access tokens
 
 ## Server configuration
 
-Set these environment variables in the cPanel/PHP environment; do not put them in JavaScript, HTML, or Git:
+Use either PHP environment variables in cPanel **or** the secret file below. Do not put them in JavaScript, HTML, or Git:
 
 ```text
 SABRE_CLIENT_ID=<Sabre User ID>
 SABRE_CLIENT_SECRET=<Sabre password>
 SABRE_BASE_URL=https://api.cert.platform.sabre.com
 ```
+
+### Recommended cPanel setup
+
+In cPanel File Manager, create `/home/<your-cPanel-account>/jtm-sabre.php` — beside `public_html`, not inside it. Copy the structure from [sabre-secrets.php.example](sabre-secrets.php.example), enter the credentials, then set its permission to `600`. The gateway automatically loads this file when PHP environment variables are not present.
 
 `SABRE_SEARCH_PATH` is optional and defaults to the legacy Flight Search API v1 path, `/v1/shop/flights`.
 
