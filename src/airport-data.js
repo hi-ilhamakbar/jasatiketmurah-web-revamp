@@ -37,14 +37,11 @@
         const city = group.city;
         if (city) {
           const index = selectable.push(city) - 1;
-          rows.push(`<button type="button" class="airport-city" data-region="${index}"><b>${safe(group.name)}</b><small>Kota · ${safe(group.country)}</small></button>`);
+          rows.push(`<button type="button" class="airport-city" data-region="${index}"><b>${safe(label(city))}</b><small>Kota · ${safe(group.country)}</small></button>`);
         } else rows.push(`<div class="airport-city" aria-hidden="true"><b>${safe(group.name)}</b><small>Kota · ${safe(group.country)}</small></div>`);
-        const usedIata = new Set(city ? [city.iata] : []);
         group.airports.forEach(airport => {
-          if (usedIata.has(airport.iata)) return;
-          usedIata.add(airport.iata);
           const index = selectable.push(airport) - 1;
-          rows.push(`<button type="button" class="airport-option" data-region="${index}"><b>${safe(airport.name)} (${safe(airport.iata)})</b><small>Bandara · ${safe(airport.country)}</small></button>`);
+          rows.push(`<button type="button" class="airport-option" data-region="${index}"><b>${safe(label(airport))}</b><small>${safe(airport.name)} · ${safe(airport.country)}</small></button>`);
         });
       });
       list._regions = selectable;
