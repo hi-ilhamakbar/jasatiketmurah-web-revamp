@@ -149,6 +149,7 @@ if (!document.querySelector('script[data-jtm-flight-search]')) {
   const flights = document.createElement('script'); flights.src = '/flight-search-api.js'; flights.async = false; flights.dataset.jtmFlightSearch = 'true'; document.body.appendChild(flights);
   const filters = document.createElement('script'); filters.src = '/results-filters.js'; filters.async = false; document.body.appendChild(filters);
   const checkout = document.createElement('script'); checkout.src = '/flight-checkout.js'; checkout.async = false; document.body.appendChild(checkout);
+  const checkoutSummary = document.createElement('script'); checkoutSummary.src = '/checkout-summary.js'; checkoutSummary.async = false; document.body.appendChild(checkoutSummary);
 }
 
 const flightDeparture=document.querySelector('#travel-date'),flightReturn=document.querySelector('#return-date');
