@@ -12,7 +12,7 @@
 
   const form = document.querySelector('#search-form');
   if (!form) return;
-  document.head.insertAdjacentHTML('beforeend', '<style>.airport-city{display:block;width:100%;border:0;background:#fff;text-align:left;padding:9px 12px 7px;font:inherit;cursor:pointer}.airport-city b{display:block}.airport-city small{display:block;color:#526b8e;font-size:.76rem}.airport-option{display:block;width:100%;border:0;border-top:1px solid #e8eef6;background:#f8fbff;text-align:left;padding:8px 12px 8px 28px;font:inherit;cursor:pointer}.airport-option:hover{background:#edf5ff}.airport-option b{display:block}.airport-option small{display:block;color:#526b8e;font-size:.76rem}.airport-loading{display:block;padding:10px 12px;color:#526b8e}</style>');
+  document.head.insertAdjacentHTML('beforeend', '<style>.airport-suggestions{border:0!important;border-radius:0 0 13px 13px!important;box-shadow:0 10px 22px rgba(13,27,42,.22)!important}.airport-city{display:block;width:100%;border:0;background:#fff;text-align:left;padding:13px 14px 10px;font:inherit;cursor:pointer}.airport-city b{display:block;font-weight:600}.airport-city small{display:block;color:#64748b;font-size:.76rem;margin-top:2px}.airport-option{display:grid!important;grid-template-columns:20px 1fr;width:100%;border:0!important;background:#fff;text-align:left;padding:9px 14px 9px 20px!important;font:inherit;cursor:pointer}.airport-option:hover{background:#f5f9ff!important}.airport-option-icon{grid-row:1 / span 2;color:#536475;font-size:15px;align-self:center}.airport-option b{display:block;font-weight:500;line-height:1.28}.airport-option small{display:block;color:#7a8798;font-size:.72rem;margin-top:2px;line-height:1.35}.airport-loading{display:block;padding:12px 14px;color:#526b8e}</style>');
   [document.querySelector('#origin'), document.querySelector('#destination')].forEach(input => {
     if (!input) return;
     input.parentElement.querySelectorAll('.airport-suggestions').forEach(node => node.remove());
@@ -37,11 +37,11 @@
         const city = group.city;
         if (city) {
           const index = selectable.push(city) - 1;
-          rows.push(`<button type="button" class="airport-city" data-region="${index}"><b>${safe(label(city))}</b><small>Kota · ${safe(group.country)}</small></button>`);
-        } else rows.push(`<div class="airport-city" aria-hidden="true"><b>${safe(group.name)}</b><small>Kota · ${safe(group.country)}</small></div>`);
+          rows.push(`<button type="button" class="airport-city" data-region="${index}"><b>${safe(group.name)}, ${safe(group.country)}</b><small>Kota</small></button>`);
+        } else rows.push(`<div class="airport-city" aria-hidden="true"><b>${safe(group.name)}, ${safe(group.country)}</b><small>Kota</small></div>`);
         group.airports.forEach(airport => {
           const index = selectable.push(airport) - 1;
-          rows.push(`<button type="button" class="airport-option" data-region="${index}"><b>${safe(label(airport))}</b><small>${safe(airport.name)} · ${safe(airport.country)}</small></button>`);
+          rows.push(`<button type="button" class="airport-option" data-region="${index}"><span class="airport-option-icon" aria-hidden="true">✈</span><span><b>${safe(airport.name)}</b><small>${safe(airport.iata)} · ${safe(group.name)}, ${safe(airport.country)}</small></span></button>`);
         });
       });
       list._regions = selectable;
