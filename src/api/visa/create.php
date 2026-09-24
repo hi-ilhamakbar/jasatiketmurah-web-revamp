@@ -30,7 +30,7 @@ $prices = [
     'tourist-60-multiple' => 11400000,
 ];
 
-if (!isset($prices[$type]) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!isset($prices[$type]) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !preg_match('/^[0-9]{5,20}$/', $phone) || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
