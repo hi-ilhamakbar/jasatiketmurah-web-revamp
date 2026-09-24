@@ -24,7 +24,7 @@
   const clean = value => String(value||'').replace(/\b(Bandar Udara|Airport|Internasional|International)\b/gi,'').replace(/\s+/g,' ').trim();
   const airport = leg => `${clean(leg.departure_airport?.name)} → ${clean(leg.arrival_airport?.name)}`;
   const numbers = flight => [...new Set((flight.flights||[]).map(leg => `${leg.airline||''} ${leg.flight_number||''}`.trim()).filter(Boolean))].join(' · ');
-  const sector = (title, flight) => `<section class="checkout-sector"><b>${title}</b><p>${(flight.flights||[]).map(airport).join('<br>')}</p><small>${numbers(flight)}</small></section>`;
+  const sector = (title, flight) => `<section class="checkout-sector"><b>${title}</b>${(flight.flights||[]).map(leg=>`<p><strong>${airport(leg)}</strong><br><span>${leg.airline||''} ${leg.flight_number||''} · ${new Intl.DateTimeFormat('id-ID',{dateStyle:'medium',timeStyle:'short'}).format(new Date(String(leg.departure_airport?.time||'').replace(' ','T')))}</span></p>`).join('')}<small>${numbers(flight)}</small></section>`;
   const style = '<style>.checkout-sector{padding:11px 0;border-top:1px solid #e2e8f0}.checkout-sector:first-child{border-top:0}.checkout-sector p{margin:5px 0;line-height:1.4}.checkout-sector small{color:#526b8e}</style>';
   const aside=document.querySelector('.order-summary'),route=document.querySelector('#checkout-route');
   if (!aside || !route) return;
@@ -32,4 +32,7 @@
   const details=document.createElement('div'); details.className='checkout-itineraries'; details.innerHTML=style+sector('Pergi',choice.flight)+sector('Pulang',choice.returnFlight); route.after(details);
   document.querySelector('#checkout-airline').textContent=`${numbers(choice.flight)} · ${numbers(choice.returnFlight)}`;
   document.querySelector('#checkout-date').textContent=`${new Intl.DateTimeFormat('id-ID',{dateStyle:'medium'}).format(new Date(`${choice.search.departure}T12:00:00`))} · pulang ${new Intl.DateTimeFormat('id-ID',{dateStyle:'medium'}).format(new Date(`${choice.search.return}T12:00:00`))}`;
+  ['#checkout-airline','#checkout-date','#checkout-passengers'].forEach(selector=>{const row=document.querySelector(selector)?.closest('div');if(row)row.hidden=true});
+  document.querySelector('.order-total span').textContent='Harga indikatif pergi–pulang';
+  document.querySelector('.order-summary small').textContent='Harga yang ditampilkan adalah harga indikatif pergi–pulang per orang dalam mata uang yang Anda pilih. Harga dan ketersediaan dikonfirmasi sebelum tiket diterbitkan.';
 })();

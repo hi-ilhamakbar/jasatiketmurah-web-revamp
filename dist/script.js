@@ -147,6 +147,7 @@ if(visaForm){
 if (!document.querySelector('script[data-jtm-flight-search]')) {
   const airports = document.createElement('script'); airports.src = '/airport-data.js'; airports.async = false; document.body.appendChild(airports);
   const flights = document.createElement('script'); flights.src = '/flight-search-api.js'; flights.async = false; flights.dataset.jtmFlightSearch = 'true'; document.body.appendChild(flights);
+  const filters = document.createElement('script'); filters.src = '/results-filters.js'; filters.async = false; document.body.appendChild(filters);
   const checkout = document.createElement('script'); checkout.src = '/flight-checkout.js'; checkout.async = false; document.body.appendChild(checkout);
 }
 
