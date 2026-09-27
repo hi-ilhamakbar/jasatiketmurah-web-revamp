@@ -13,8 +13,7 @@
   const prices = { normal: 250000, express: 500000 };
   const documentCards = [
     ['passport', 'Halaman biodata paspor', true, '.pdf,.jpg,.jpeg,.png', 'visa-passport.png', 'visa-passport-sample.jpg'],
-    ['endorsement', 'Halaman catatan pengesahan / Endorsement', true, '.pdf,.jpg,.jpeg,.png', 'visa-document.png'],
-    ['additional-two', 'Dokumen tambahan 2', false, '.pdf,.jpg,.jpeg,.png', 'visa-document.png']
+    ['endorsement', 'Halaman catatan pengesahan / Endorsement', true, '.pdf,.jpg,.jpeg,.png', 'visa-document.png']
   ];
   const money = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
   const applicants = () => Math.min(10, Math.max(1, Number(quantity.value) || 1));
@@ -41,6 +40,10 @@
       nationality.style.setProperty('--country-flag', `url("https://flagcdn.com/w40/${nationality.value.toLowerCase()}.png")`);
     });
   }
+  const addressField = document.createElement('label');
+  addressField.className = 'visa-address-field';
+  addressField.innerHTML = '<span>Alamat lengkap</span><textarea name="address" rows="3" required placeholder="Masukkan alamat lengkap"></textarea>';
+  form.querySelector('.field-grid:nth-of-type(2)')?.insertAdjacentElement('afterend', addressField);
   form.querySelector('[name="phone"]').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, ''); });
   refresh();
   form.addEventListener('submit', async event => {

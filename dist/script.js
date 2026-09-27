@@ -156,6 +156,7 @@ document.querySelectorAll('#uae-speed,#turkey-speed,#japan-speed').forEach(selec
 });
 document.querySelector('#uae-speed-note')?.replaceChildren('Pilih kecepatan proses');
 if(!document.querySelector('#uae-visa-type')?.value){document.querySelector('#uae-price')?.replaceChildren('Rp0');document.querySelector('#uae-total')?.replaceChildren('Rp0');}
+document.head.insertAdjacentHTML('beforeend','<style>.visa-form .visa-address-field{display:flex;flex-direction:column;gap:7px;margin-top:14px;color:#475569;font-size:.78rem;font-weight:700}.visa-form .visa-address-field textarea{min-height:88px;resize:vertical;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0d1b2a;font:500 .91rem DM Sans;padding:10px}.visa-form .visa-address-field textarea:focus{outline:2px solid #bae6fd;border-color:#0ea5e9}</style>');
 document.querySelectorAll('#uae-visa-type,#turkey-visa-type,#japan-visa-type').forEach(select=>{
   const placeholder=select.querySelector('option[value=""]');
   if(!placeholder)return;
