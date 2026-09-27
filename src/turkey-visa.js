@@ -36,7 +36,7 @@
     });
   };
   const refresh = () => {
-    const chosen = Boolean(type.value);
+    const chosen = Boolean(type.value && speed.value);
     const unit = chosen ? (prices[speed.value] || prices.normal) : 0;
     price.textContent = money(unit);
     total.textContent = money(unit * applicantCount());

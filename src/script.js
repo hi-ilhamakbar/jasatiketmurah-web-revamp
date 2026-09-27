@@ -156,3 +156,18 @@ document.querySelectorAll('#uae-speed,#turkey-speed').forEach(select=>{
 });
 document.querySelector('#uae-speed-note')?.replaceChildren('Pilih kecepatan proses');
 if(!document.querySelector('#uae-visa-type')?.value){document.querySelector('#uae-price')?.replaceChildren('Rp0');document.querySelector('#uae-total')?.replaceChildren('Rp0');}
+document.querySelectorAll('#uae-visa-type,#turkey-visa-type').forEach(select=>{
+  const placeholder=select.querySelector('option[value=""]');
+  if(!placeholder)return;
+  placeholder.disabled=true;
+  placeholder.selected=true;
+  select.required=true;
+  select.value='';
+});
+const uaeVisaType=document.querySelector('#uae-visa-type'),uaeVisaSpeed=document.querySelector('#uae-speed'),uaeVisaDocs=document.querySelector('#uae-documents'),uaeVisaSubmit=document.querySelector('#uae-visa-form [type="submit"]');
+if(uaeVisaType&&uaeVisaSpeed&&uaeVisaDocs&&uaeVisaSubmit){
+  const syncUaeDocuments=()=>{const ready=Boolean(uaeVisaType.value&&uaeVisaSpeed.value);uaeVisaDocs.hidden=!ready;uaeVisaSubmit.disabled=!ready;};
+  uaeVisaType.addEventListener('change',syncUaeDocuments);
+  uaeVisaSpeed.addEventListener('change',syncUaeDocuments);
+  syncUaeDocuments();
+}
