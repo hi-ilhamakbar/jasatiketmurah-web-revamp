@@ -22,6 +22,10 @@ $email = (string) ($_POST['email'] ?? '');
 $phoneCountry = trim((string) ($_POST['phoneCountry'] ?? ''));
 $phone = trim((string) ($_POST['phone'] ?? ''));
 $nationality = trim((string) ($_POST['nationality'] ?? ''));
+$address = trim((string) ($_POST['address'] ?? ''));
+$city = trim((string) ($_POST['city'] ?? ''));
+$province = trim((string) ($_POST['province'] ?? ''));
+$postalCode = trim((string) ($_POST['postalCode'] ?? ''));
 $prices = [
     'transit-48' => 500000,
     'transit-96' => 1500000,
@@ -31,23 +35,35 @@ $prices = [
     'tourist-60-multiple' => 11400000,
 ];
 $turkeyPrices = ['normal' => 1500000, 'express' => 2000000, 'super-express' => 2500000];
+$japanPrices = ['normal' => 250000, 'express' => 500000];
+$validType = $country === 'TR'
+    ? $type === 'turkey-single-30'
+    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : isset($prices[$type]));
+$validSpeed = $country === 'JP'
+    ? in_array($speed, ['normal', 'express'], true)
+    : in_array($speed, ['normal', 'express', 'super-express'], true);
+$validNationality = $country !== 'JP' || in_array($nationality, ['ID', 'QA'], true);
 
-if (($country === 'TR' ? $type !== 'turkey-single-30' : !isset($prices[$type])) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+$requiresAddress = in_array($country, ['AE', 'TR', 'JP'], true);
+if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || ($requiresAddress && (!$address || !$city || !$province || !preg_match('/^[0-9]{4,10}$/', $postalCode))) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
 
 for ($applicant = 1; $applicant <= $quantity; $applicant++) {
-    foreach (["face_$applicant", "passport_$applicant"] as $required) {
+    $requiredDocuments = $country === 'JP'
+        ? ["passport_$applicant", "endorsement_$applicant"]
+        : ["face_$applicant", "passport_$applicant"];
+    foreach ($requiredDocuments as $required) {
         if (!isset($_FILES[$required]) || ($_FILES[$required]['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             http_response_code(422);
-            exit(json_encode(['ok' => false, 'message' => 'A face photo and passport bio page are required for every applicant.']));
+            exit(json_encode(['ok' => false, 'message' => $country === 'JP' ? 'A passport bio page and endorsement page are required for every applicant.' : 'A face photo and passport bio page are required for every applicant.']));
         }
     }
 }
 
 $surcharge = $speed === 'express' ? 500000 : ($speed === 'super-express' ? 1200000 : 0);
-$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($prices[$type] + $surcharge);
+$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($prices[$type] + $surcharge));
 $total = $unitPrice * $quantity;
 $case = 'JTMV' . time() . random_int(10, 99);
 $directory = rtrim($storage, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $case;
@@ -88,12 +104,12 @@ foreach ($_FILES as $field => $upload) {
 $record = [
     'caseNumber' => $case, 'status' => 'SUBMITTED', 'country' => $country, 'visaType' => $type,
     'processingSpeed' => $speed, 'quantity' => $quantity, 'totalIDR' => $total, 'name' => $name,
-    'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'documents' => $savedFiles,
+    'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'address' => $address, 'city' => $city, 'province' => $province, 'postalCode' => $postalCode, 'documents' => $savedFiles,
     'createdAt' => gmdate('c'),
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
 
-$countryName = $country === 'TR' ? 'Turkey' : 'UAE';
+$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : 'UAE');
 $subject = "Jasa Tiket Murah — $countryName Visa application $case";
 $body = '<h2>Application received</h2><p>Your ' . $countryName . ' visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
 $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: noreply@jasatiketmurah.com\r\nCc: cs@jasatiketmurah.com\r\nBcc: jasatiketmurah@gmail.com";
@@ -102,7 +118,7 @@ $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom:
 $paymentUrl = null;
 $key = getenv('XENDIT_SECRET_KEY');
 if ($key && function_exists('curl_init')) {
-    $payload = json_encode(['external_id' => $case, 'amount' => $total, 'payer_email' => $email, 'description' => "UAE Visa $case"]);
+    $payload = json_encode(['external_id' => $case, 'amount' => $total, 'payer_email' => $email, 'description' => "$countryName Visa $case"]);
     $request = curl_init('https://api.xendit.co/v2/invoices');
     curl_setopt_array($request, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $payload, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_USERPWD => $key . ':', CURLOPT_RETURNTRANSFER => true]);
     $response = json_decode((string) curl_exec($request), true);

@@ -47,6 +47,7 @@
   };
 
   [type, speed, quantity].forEach(control => control.addEventListener('input', refresh));
+  window.addVisaAddressFields(form);
   form.querySelector('[name="phone"]').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, ''); });
   refresh();
   form.addEventListener('submit', async event => {
