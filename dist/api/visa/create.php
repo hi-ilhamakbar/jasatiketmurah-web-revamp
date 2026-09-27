@@ -31,8 +31,15 @@ $prices = [
     'tourist-60-multiple' => 11400000,
 ];
 $turkeyPrices = ['normal' => 1500000, 'express' => 2000000, 'super-express' => 2500000];
+$japanPrices = ['normal' => 250000, 'express' => 500000];
+$validType = $country === 'TR'
+    ? $type === 'turkey-single-30'
+    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : isset($prices[$type]));
+$validSpeed = $country === 'JP'
+    ? in_array($speed, ['normal', 'express'], true)
+    : in_array($speed, ['normal', 'express', 'super-express'], true);
 
-if (($country === 'TR' ? $type !== 'turkey-single-30' : !isset($prices[$type])) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!$validType || !$validSpeed || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
@@ -47,7 +54,7 @@ for ($applicant = 1; $applicant <= $quantity; $applicant++) {
 }
 
 $surcharge = $speed === 'express' ? 500000 : ($speed === 'super-express' ? 1200000 : 0);
-$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($prices[$type] + $surcharge);
+$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($prices[$type] + $surcharge));
 $total = $unitPrice * $quantity;
 $case = 'JTMV' . time() . random_int(10, 99);
 $directory = rtrim($storage, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $case;
@@ -93,7 +100,7 @@ $record = [
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
 
-$countryName = $country === 'TR' ? 'Turkey' : 'UAE';
+$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : 'UAE');
 $subject = "Jasa Tiket Murah — $countryName Visa application $case";
 $body = '<h2>Application received</h2><p>Your ' . $countryName . ' visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
 $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: noreply@jasatiketmurah.com\r\nCc: cs@jasatiketmurah.com\r\nBcc: jasatiketmurah@gmail.com";
@@ -102,7 +109,7 @@ $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom:
 $paymentUrl = null;
 $key = getenv('XENDIT_SECRET_KEY');
 if ($key && function_exists('curl_init')) {
-    $payload = json_encode(['external_id' => $case, 'amount' => $total, 'payer_email' => $email, 'description' => "UAE Visa $case"]);
+    $payload = json_encode(['external_id' => $case, 'amount' => $total, 'payer_email' => $email, 'description' => "$countryName Visa $case"]);
     $request = curl_init('https://api.xendit.co/v2/invoices');
     curl_setopt_array($request, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $payload, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_USERPWD => $key . ':', CURLOPT_RETURNTRANSFER => true]);
     $response = json_decode((string) curl_exec($request), true);

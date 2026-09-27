@@ -146,8 +146,8 @@ if(visaForm){
   sync();
 }
 // The landmark needs to be painted above the colour wash; the prior order hid it.
-document.head.insertAdjacentHTML('beforeend','<style>.visa-uae-hero{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(0,70,42,.98),rgba(0,44,33,.9) 54%,rgba(9,24,45,.77))!important}.visa-turkey-hero{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(119,12,28,.98),rgba(181,21,42,.89) 54%,rgba(135,16,31,.76))!important}.visa-country-card.ae{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(22,162,223,.98),rgba(12,41,80,.95) 78%)!important}.visa-country-card.tr{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(223,38,53,.98),rgba(117,16,27,.95) 78%)!important}</style>');
-document.querySelectorAll('#uae-speed,#turkey-speed').forEach(select=>{
+document.head.insertAdjacentHTML('beforeend','<style>.visa-uae-hero{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(0,70,42,.98),rgba(0,44,33,.9) 54%,rgba(9,24,45,.77))!important}.visa-turkey-hero{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(119,12,28,.98),rgba(181,21,42,.89) 54%,rgba(135,16,31,.76))!important}.visa-japan-hero{background:url("/assets/visa-japan-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(125,20,38,.98),rgba(192,38,56,.88) 54%,rgba(229,81,98,.78))!important}.visa-country-card.ae{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(22,162,223,.98),rgba(12,41,80,.95) 78%)!important}.visa-country-card.tr{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(223,38,53,.98),rgba(117,16,27,.95) 78%)!important}.visa-country-card.jp{background:url("/assets/visa-japan-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(213,44,61,.98),rgba(129,19,34,.95) 78%)!important}</style>');
+document.querySelectorAll('#uae-speed,#turkey-speed,#japan-speed').forEach(select=>{
   const placeholder=new Option('Pilih kecepatan proses','',true,true);
   placeholder.disabled=true;
   select.prepend(placeholder);
@@ -156,7 +156,7 @@ document.querySelectorAll('#uae-speed,#turkey-speed').forEach(select=>{
 });
 document.querySelector('#uae-speed-note')?.replaceChildren('Pilih kecepatan proses');
 if(!document.querySelector('#uae-visa-type')?.value){document.querySelector('#uae-price')?.replaceChildren('Rp0');document.querySelector('#uae-total')?.replaceChildren('Rp0');}
-document.querySelectorAll('#uae-visa-type,#turkey-visa-type').forEach(select=>{
+document.querySelectorAll('#uae-visa-type,#turkey-visa-type,#japan-visa-type').forEach(select=>{
   const placeholder=select.querySelector('option[value=""]');
   if(!placeholder)return;
   placeholder.disabled=true;
