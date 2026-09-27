@@ -145,3 +145,14 @@ if(visaForm){
   quantity.addEventListener('change',()=>{if(type.value)renderVisaDocuments()});
   sync();
 }
+// The landmark needs to be painted above the colour wash; the prior order hid it.
+document.head.insertAdjacentHTML('beforeend','<style>.visa-uae-hero{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(0,70,42,.98),rgba(0,44,33,.9) 54%,rgba(9,24,45,.77))!important}.visa-turkey-hero{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 100% no-repeat,linear-gradient(100deg,rgba(119,12,28,.98),rgba(181,21,42,.89) 54%,rgba(135,16,31,.76))!important}.visa-country-card.ae{background:url("/assets/visa-uae-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(22,162,223,.98),rgba(12,41,80,.95) 78%)!important}.visa-country-card.tr{background:url("/assets/visa-turkey-landmark.svg") right bottom/auto 86% no-repeat,linear-gradient(145deg,rgba(223,38,53,.98),rgba(117,16,27,.95) 78%)!important}</style>');
+document.querySelectorAll('#uae-speed,#turkey-speed').forEach(select=>{
+  const placeholder=new Option('Pilih kecepatan proses','',true,true);
+  placeholder.disabled=true;
+  select.prepend(placeholder);
+  select.required=true;
+  select.value='';
+});
+document.querySelector('#uae-speed-note')?.replaceChildren('Pilih kecepatan proses');
+if(!document.querySelector('#uae-visa-type')?.value){document.querySelector('#uae-price')?.replaceChildren('Rp0');document.querySelector('#uae-total')?.replaceChildren('Rp0');}
