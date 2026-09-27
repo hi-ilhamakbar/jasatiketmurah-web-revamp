@@ -12,11 +12,8 @@
   const submit = form.querySelector('[type="submit"]');
   const prices = { normal: 250000, express: 500000 };
   const documentCards = [
-    ['face', 'Foto diri (tanpa kacamata)', true, '.jpg,.jpeg,.png', 'visa-face.png', 'visa-face-sample.jpg'],
     ['passport', 'Halaman biodata paspor', true, '.pdf,.jpg,.jpeg,.png', 'visa-passport.png', 'visa-passport-sample.jpg'],
-    ['ticket', 'Tiket penerbangan', false, '.pdf,.jpg,.jpeg,.png', 'visa-ticket.png'],
-    ['hotel', 'Bukti reservasi hotel', false, '.pdf,.jpg,.jpeg,.png', 'visa-hotel.png'],
-    ['additional-one', 'Dokumen tambahan 1', false, '.pdf,.jpg,.jpeg,.png', 'visa-document.png'],
+    ['endorsement', 'Halaman catatan pengesahan / Endorsement', true, '.pdf,.jpg,.jpeg,.png', 'visa-document.png'],
     ['additional-two', 'Dokumen tambahan 2', false, '.pdf,.jpg,.jpeg,.png', 'visa-document.png']
   ];
   const money = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
@@ -36,6 +33,14 @@
     if (ready) renderDocs();
   };
   [type, speed, quantity].forEach(control => control.addEventListener('input', refresh));
+  const nationality = form.querySelector('[name="nationality"]');
+  if (nationality) {
+    [...nationality.options].forEach(option => { if (!['ID', 'QA'].includes(option.value)) option.remove(); });
+    nationality.value = 'ID';
+    nationality.addEventListener('change', () => {
+      nationality.style.setProperty('--country-flag', `url("https://flagcdn.com/w40/${nationality.value.toLowerCase()}.png")`);
+    });
+  }
   form.querySelector('[name="phone"]').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, ''); });
   refresh();
   form.addEventListener('submit', async event => {

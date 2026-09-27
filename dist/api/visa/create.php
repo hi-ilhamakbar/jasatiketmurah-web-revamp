@@ -38,17 +38,21 @@ $validType = $country === 'TR'
 $validSpeed = $country === 'JP'
     ? in_array($speed, ['normal', 'express'], true)
     : in_array($speed, ['normal', 'express', 'super-express'], true);
+$validNationality = $country !== 'JP' || in_array($nationality, ['ID', 'QA'], true);
 
-if (!$validType || !$validSpeed || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
 
 for ($applicant = 1; $applicant <= $quantity; $applicant++) {
-    foreach (["face_$applicant", "passport_$applicant"] as $required) {
+    $requiredDocuments = $country === 'JP'
+        ? ["passport_$applicant", "endorsement_$applicant"]
+        : ["face_$applicant", "passport_$applicant"];
+    foreach ($requiredDocuments as $required) {
         if (!isset($_FILES[$required]) || ($_FILES[$required]['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             http_response_code(422);
-            exit(json_encode(['ok' => false, 'message' => 'A face photo and passport bio page are required for every applicant.']));
+            exit(json_encode(['ok' => false, 'message' => $country === 'JP' ? 'A passport bio page and endorsement page are required for every applicant.' : 'A face photo and passport bio page are required for every applicant.']));
         }
     }
 }
