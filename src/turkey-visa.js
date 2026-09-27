@@ -1,12 +1,65 @@
 (() => {
-  const form=document.querySelector('#turkey-visa-form');if(!form)return;
-  document.head.insertAdjacentHTML('beforeend','<style>.visa-form .country-select,.visa-form .country-code-select{height:48px;border:1px solid #cbd5e1;border-radius:8px;background-color:#fff;color:#0d1b2a;font:500 .92rem DM Sans;padding:10px 38px 10px 38px;appearance:none;background-image:var(--country-flag),linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%);background-repeat:no-repeat;background-position:10px center,calc(100% - 17px) center,calc(100% - 12px) center;background-size:20px 15px,6px 6px,6px 6px}.visa-form .country-code-select{max-width:190px}</style>');
-  document.head.insertAdjacentHTML('beforeend','<style>.visa-upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.visa-document-card{position:relative;display:grid;place-items:center;min-height:132px;padding:14px;border:1px dashed #bfdbfe;border-radius:8px;background:#fff;text-align:center;cursor:pointer}.visa-document-card:hover{border-color:#1e3a8a;background:#f8fbff}.visa-document-card input{position:absolute;inset:0;opacity:0;cursor:pointer}.visa-document-card b,.visa-document-card small{display:block}.visa-document-card b{color:#173d82}.visa-document-card small{margin-top:5px;color:#6480a5}.visa-document-icon{font-size:27px;margin-bottom:7px}.visa-applicant{border:1px solid #dbe3ec;border-radius:9px;padding:13px;margin:16px 0}.visa-applicant>summary{display:flex;justify-content:space-between;font-weight:800;cursor:pointer}.visa-applicant>summary span{color:#ef4444;font-size:.74rem;font-weight:500}@media(max-width:560px){.visa-upload-grid{grid-template-columns:1fr}}</style>');
-  const type=document.querySelector('#turkey-visa-type'),speed=document.querySelector('#turkey-speed'),quantity=document.querySelector('#turkey-quantity'),price=document.querySelector('#turkey-price'),total=document.querySelector('#turkey-total'),note=document.querySelector('#turkey-speed-note'),docs=document.querySelector('#turkey-documents'),feedback=document.querySelector('#turkey-feedback'),submit=form.querySelector('[type="submit"]');
-  const prices={normal:1500000,express:2000000,'super-express':2500000},money=value=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(value);
-  const documents=[['face','◉','Foto diri (tanpa kacamata)','image/*',true],['passport','▣','Halaman biodata paspor','.pdf,.jpg,.jpeg,.png',true],['flight','✈','Tiket penerbangan','.pdf,.jpg,.jpeg,.png',false],['hotel','▤','Bukti reservasi hotel','.pdf,.jpg,.jpeg,.png',false],['additional_1','▧','Dokumen tambahan 1','.pdf,.jpg,.jpeg,.png',false],['additional_2','▧','Dokumen tambahan 2','.pdf,.jpg,.jpeg,.png',false]];
-  const renderDocs=()=>{const count=Math.min(10,Math.max(1,Number(quantity.value)||1));docs.innerHTML=Array.from({length:count},(_,index)=>`<details class="visa-applicant" ${index===0?'open':''}><summary>Pemohon ${index+1} — Dokumen <span>0 file dipilih</span></summary><div class="visa-upload-grid">${documents.map(([key,icon,label,accept,required])=>`<label class="visa-document-card"><input name="${key}_${index+1}" type="file" accept="${accept}" ${required?'required':''}><span><span class="visa-document-icon">${icon}</span><b>${label}${required?' *':''}</b><small>Klik untuk upload</small></span></label>`).join('')}</div></details>`).join('');docs.querySelectorAll('.visa-applicant').forEach(applicant=>applicant.addEventListener('change',()=>{const selected=[...applicant.querySelectorAll('input[type=file]')].filter(input=>input.files?.length).length;applicant.querySelector('summary span').textContent=`${selected} file dipilih`}))};
-  const refresh=()=>{const chosen=Boolean(type.value),unit=chosen?(prices[speed.value]||prices.normal):0;price.textContent=money(unit);total.textContent=money(unit*Math.min(10,Math.max(1,Number(quantity.value)||1)));note.textContent=speed.options[speed.selectedIndex].text;docs.hidden=!chosen;submit.disabled=!chosen;if(chosen)renderDocs()};
-  [type,speed,quantity].forEach(control=>control.addEventListener('input',refresh));form.querySelector('[name="phone"]').addEventListener('input',event=>event.target.value=event.target.value.replace(/\D/g,''));refresh();
-  form.addEventListener('submit',async event=>{event.preventDefault();const data=new FormData(form);data.append('country','TR');data.append('visaType',type.value);data.append('processingSpeed',speed.value);data.append('quantity',quantity.value);feedback.textContent='Mengirim aplikasi…';try{const response=await fetch('/api/visa/create.php',{method:'POST',body:data}),result=await response.json();if(!response.ok||!result.ok)throw new Error(result.message||'Tidak dapat mengirim aplikasi.');feedback.textContent='Aplikasi diterima.';if(result.paymentUrl)location.href=result.paymentUrl}catch(error){feedback.textContent=error.message||'Koneksi pembayaran belum tersedia. Silakan hubungi tim kami.'}});
+  const form = document.querySelector('#turkey-visa-form');
+  if (!form) return;
+
+  const type = document.querySelector('#turkey-visa-type');
+  const speed = document.querySelector('#turkey-speed');
+  const quantity = document.querySelector('#turkey-quantity');
+  const price = document.querySelector('#turkey-price');
+  const total = document.querySelector('#turkey-total');
+  const note = document.querySelector('#turkey-speed-note');
+  const docs = document.querySelector('#turkey-documents');
+  const feedback = document.querySelector('#turkey-feedback');
+  const submit = form.querySelector('[type="submit"]');
+  const prices = { normal: 1500000, express: 2000000, 'super-express': 2500000 };
+  const documentCards = [
+    ['face', 'Foto diri (tanpa kacamata)', true, '.jpg,.jpeg,.png', 'visa-face.png', 'visa-face-sample.jpg'],
+    ['passport', 'Halaman biodata paspor', true, '.pdf,.jpg,.jpeg,.png', 'visa-passport.png', 'visa-passport-sample.jpg'],
+    ['ticket', 'Tiket penerbangan', false, '.pdf,.jpg,.jpeg,.png', 'visa-ticket.png'],
+    ['hotel', 'Bukti reservasi hotel', false, '.pdf,.jpg,.jpeg,.png', 'visa-hotel.png'],
+    ['additional-one', 'Dokumen tambahan 1', false, '.pdf,.jpg,.jpeg,.png', 'visa-document.png'],
+    ['additional-two', 'Dokumen tambahan 2', false, '.pdf,.jpg,.jpeg,.png', 'visa-document.png']
+  ];
+  const money = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
+  const applicantCount = () => Math.min(10, Math.max(1, Number(quantity.value) || 1));
+
+  const renderDocs = () => {
+    docs.innerHTML = Array.from({ length: applicantCount() }, (_, index) => `<details class="visa-applicant" ${index === 0 ? 'open' : ''}><summary><b>Pemohon ${index + 1} — Dokumen</b><span>0 file dipilih</span></summary><div class="visa-upload-grid">${documentCards.map(([key, label, required, accept, icon, preview]) => `<label class="visa-document-card${preview ? ' has-preview' : ''}"><img class="visa-document-icon" src="/assets/${icon}" alt="" aria-hidden="true">${preview ? `<span class="visa-document-preview"><img src="/assets/${preview}" alt="Contoh ${label}"></span>` : ''}<b>${label}${required ? ' *' : ''}</b><small>Klik untuk upload</small><input name="${key}_${index + 1}${key.startsWith('additional') ? '[]' : ''}" type="file" ${required ? 'required' : ''} ${key.startsWith('additional') ? 'multiple' : ''} accept="${accept}"></label>`).join('')}</div></details>`).join('');
+    docs.querySelectorAll('.visa-applicant').forEach(item => {
+      item.addEventListener('change', () => {
+        const selected = [...item.querySelectorAll('input[type=file]')].reduce((sum, input) => sum + (input.files?.length || 0), 0);
+        item.querySelector('summary span').textContent = `${selected} file dipilih`;
+      });
+      item.addEventListener('toggle', () => {
+        if (item.open) docs.querySelectorAll('.visa-applicant[open]').forEach(other => { if (other !== item) other.open = false; });
+      });
+    });
+  };
+  const refresh = () => {
+    const chosen = Boolean(type.value);
+    const unit = chosen ? (prices[speed.value] || prices.normal) : 0;
+    price.textContent = money(unit);
+    total.textContent = money(unit * applicantCount());
+    note.textContent = speed.options[speed.selectedIndex].text;
+    docs.hidden = !chosen;
+    submit.disabled = !chosen;
+    if (chosen) renderDocs();
+  };
+
+  [type, speed, quantity].forEach(control => control.addEventListener('input', refresh));
+  form.querySelector('[name="phone"]').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, ''); });
+  refresh();
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const data = new FormData(form);
+    data.append('country', 'TR'); data.append('visaType', type.value); data.append('processingSpeed', speed.value); data.append('quantity', quantity.value);
+    feedback.textContent = 'Mengirim aplikasi…';
+    try {
+      const response = await fetch('/api/visa/create.php', { method: 'POST', body: data });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.message || 'Tidak dapat mengirim aplikasi.');
+      feedback.textContent = 'Aplikasi diterima.';
+      if (result.paymentUrl) location.href = result.paymentUrl;
+    } catch (error) { feedback.textContent = error.message || 'Koneksi pembayaran belum tersedia. Silakan hubungi tim kami.'; }
+  });
 })();
