@@ -57,13 +57,20 @@ if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountr
 }
 
 for ($applicant = 1; $applicant <= $quantity; $applicant++) {
-    $requiredDocuments = $country === 'JP'
-        ? ["passport_$applicant", "endorsement_$applicant"]
-        : ["face_$applicant", "passport_$applicant"];
+    $requiredDocuments = match (true) {
+        $country === 'JP' => ["passport_$applicant", "endorsement_$applicant"],
+        $country === 'ID' && $type === 'id-b1' => ["face_$applicant", "passport_$applicant", "ticket_$applicant", "hotel_$applicant"],
+        $country === 'ID' && $type === 'id-c1' => ["face_$applicant", "passport_$applicant", "bank-statement_$applicant"],
+        $country === 'ID' && preg_match('/^id-e31a-/', $type) === 1 => ["face_$applicant", "passport_$applicant", "ticket_$applicant", "bank-statement_$applicant", "curriculum-vitae_$applicant", "spouse-application_$applicant", "marriage-record_$applicant"],
+        default => ["face_$applicant", "passport_$applicant"],
+    };
     foreach ($requiredDocuments as $required) {
         if (!isset($_FILES[$required]) || ($_FILES[$required]['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             http_response_code(422);
-            exit(json_encode(['ok' => false, 'message' => $country === 'JP' ? 'A passport bio page and endorsement page are required for every applicant.' : 'A face photo and passport bio page are required for every applicant.']));
+            $message = $country === 'JP'
+                ? 'A passport bio page and endorsement page are required for every applicant.'
+                : ($country === 'ID' ? 'Please upload every required Indonesia visa document for each applicant.' : 'A face photo and passport bio page are required for every applicant.');
+            exit(json_encode(['ok' => false, 'message' => $message]));
         }
     }
 }
