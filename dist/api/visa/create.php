@@ -14,6 +14,7 @@ if (!$storage) {
 }
 
 $type = $_POST['visaType'] ?? '';
+$country = strtoupper(trim((string) ($_POST['country'] ?? 'AE')));
 $speed = $_POST['processingSpeed'] ?? 'normal';
 $quantity = max(1, min(10, (int) ($_POST['quantity'] ?? 1)));
 $name = trim((string) ($_POST['fullName'] ?? ''));
@@ -29,8 +30,9 @@ $prices = [
     'tourist-30-multiple' => 7000000,
     'tourist-60-multiple' => 11400000,
 ];
+$turkeyPrices = ['normal' => 1500000, 'express' => 2000000, 'super-express' => 2500000];
 
-if (!isset($prices[$type]) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (($country === 'TR' ? $type !== 'turkey-single-30' : !isset($prices[$type])) || !in_array($speed, ['normal', 'express', 'super-express'], true) || !$name || !$phoneCountry || !$phone || !$nationality || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
@@ -45,7 +47,8 @@ for ($applicant = 1; $applicant <= $quantity; $applicant++) {
 }
 
 $surcharge = $speed === 'express' ? 500000 : ($speed === 'super-express' ? 1200000 : 0);
-$total = ($prices[$type] + $surcharge) * $quantity;
+$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($prices[$type] + $surcharge);
+$total = $unitPrice * $quantity;
 $case = 'JTMV' . time() . random_int(10, 99);
 $directory = rtrim($storage, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $case;
 if (!is_dir($directory) && !mkdir($directory, 0700, true)) {
@@ -83,15 +86,16 @@ foreach ($_FILES as $field => $upload) {
 }
 
 $record = [
-    'caseNumber' => $case, 'status' => 'SUBMITTED', 'country' => 'AE', 'visaType' => $type,
+    'caseNumber' => $case, 'status' => 'SUBMITTED', 'country' => $country, 'visaType' => $type,
     'processingSpeed' => $speed, 'quantity' => $quantity, 'totalIDR' => $total, 'name' => $name,
     'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'documents' => $savedFiles,
     'createdAt' => gmdate('c'),
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
 
-$subject = "Jasa Tiket Murah — UAE Visa application $case";
-$body = '<h2>Application received</h2><p>Your UAE visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
+$countryName = $country === 'TR' ? 'Turkey' : 'UAE';
+$subject = "Jasa Tiket Murah — $countryName Visa application $case";
+$body = '<h2>Application received</h2><p>Your ' . $countryName . ' visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
 $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: noreply@jasatiketmurah.com\r\nCc: cs@jasatiketmurah.com\r\nBcc: jasatiketmurah@gmail.com";
 @mail($email, $subject, $body, $headers);
 
