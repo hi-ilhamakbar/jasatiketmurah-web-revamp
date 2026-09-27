@@ -36,15 +36,16 @@ $prices = [
 ];
 $turkeyPrices = ['normal' => 1500000, 'express' => 2000000, 'super-express' => 2500000];
 $japanPrices = ['normal' => 250000, 'express' => 500000];
+$australiaPrices = ['australia-visitor-600' => 4100000, 'australia-transit-771' => 500000];
 $validType = $country === 'TR'
     ? $type === 'turkey-single-30'
-    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : isset($prices[$type]));
-$validSpeed = $country === 'JP'
-    ? in_array($speed, ['normal', 'express'], true)
-    : in_array($speed, ['normal', 'express', 'super-express'], true);
+    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : ($country === 'AU' ? isset($australiaPrices[$type]) : isset($prices[$type])));
+$validSpeed = $country === 'AU'
+    ? $speed === 'normal'
+    : ($country === 'JP' ? in_array($speed, ['normal', 'express'], true) : in_array($speed, ['normal', 'express', 'super-express'], true));
 $validNationality = $country !== 'JP' || in_array($nationality, ['ID', 'QA'], true);
 
-$requiresAddress = in_array($country, ['AE', 'TR', 'JP'], true);
+$requiresAddress = in_array($country, ['AE', 'TR', 'JP', 'AU'], true);
 if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || ($requiresAddress && (!$address || !$city || !$province || !preg_match('/^[0-9]{4,10}$/', $postalCode))) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
@@ -63,7 +64,7 @@ for ($applicant = 1; $applicant <= $quantity; $applicant++) {
 }
 
 $surcharge = $speed === 'express' ? 500000 : ($speed === 'super-express' ? 1200000 : 0);
-$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($prices[$type] + $surcharge));
+$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($country === 'AU' ? $australiaPrices[$type] : ($prices[$type] + $surcharge)));
 $total = $unitPrice * $quantity;
 $case = 'JTMV' . time() . random_int(10, 99);
 $directory = rtrim($storage, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $case;
@@ -109,7 +110,7 @@ $record = [
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
 
-$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : 'UAE');
+$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : ($country === 'AU' ? 'Australia' : 'UAE'));
 $subject = "Jasa Tiket Murah — $countryName Visa application $case";
 $body = '<h2>Application received</h2><p>Your ' . $countryName . ' visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
 $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: noreply@jasatiketmurah.com\r\nCc: cs@jasatiketmurah.com\r\nBcc: jasatiketmurah@gmail.com";
