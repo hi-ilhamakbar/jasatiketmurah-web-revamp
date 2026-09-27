@@ -23,6 +23,9 @@ $phoneCountry = trim((string) ($_POST['phoneCountry'] ?? ''));
 $phone = trim((string) ($_POST['phone'] ?? ''));
 $nationality = trim((string) ($_POST['nationality'] ?? ''));
 $address = trim((string) ($_POST['address'] ?? ''));
+$city = trim((string) ($_POST['city'] ?? ''));
+$province = trim((string) ($_POST['province'] ?? ''));
+$postalCode = trim((string) ($_POST['postalCode'] ?? ''));
 $prices = [
     'transit-48' => 500000,
     'transit-96' => 1500000,
@@ -41,7 +44,8 @@ $validSpeed = $country === 'JP'
     : in_array($speed, ['normal', 'express', 'super-express'], true);
 $validNationality = $country !== 'JP' || in_array($nationality, ['ID', 'QA'], true);
 
-if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || (($country === 'TR' || $country === 'JP') && !$address) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+$requiresAddress = in_array($country, ['AE', 'TR', 'JP'], true);
+if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || ($requiresAddress && (!$address || !$city || !$province || !preg_match('/^[0-9]{4,10}$/', $postalCode))) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
@@ -100,7 +104,7 @@ foreach ($_FILES as $field => $upload) {
 $record = [
     'caseNumber' => $case, 'status' => 'SUBMITTED', 'country' => $country, 'visaType' => $type,
     'processingSpeed' => $speed, 'quantity' => $quantity, 'totalIDR' => $total, 'name' => $name,
-    'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'address' => $address, 'documents' => $savedFiles,
+    'email' => $email, 'phoneCountry' => $phoneCountry, 'phone' => $phone, 'nationality' => $nationality, 'address' => $address, 'city' => $city, 'province' => $province, 'postalCode' => $postalCode, 'documents' => $savedFiles,
     'createdAt' => gmdate('c'),
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);

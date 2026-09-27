@@ -156,7 +156,7 @@ document.querySelectorAll('#uae-speed,#turkey-speed,#japan-speed').forEach(selec
 });
 document.querySelector('#uae-speed-note')?.replaceChildren('Pilih kecepatan proses');
 if(!document.querySelector('#uae-visa-type')?.value){document.querySelector('#uae-price')?.replaceChildren('Rp0');document.querySelector('#uae-total')?.replaceChildren('Rp0');}
-document.head.insertAdjacentHTML('beforeend','<style>.visa-form .visa-address-field{display:flex;flex-direction:column;gap:7px;margin-top:14px;color:#475569;font-size:.78rem;font-weight:700}.visa-form .visa-address-field textarea{min-height:88px;resize:vertical;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0d1b2a;font:500 .91rem DM Sans;padding:10px}.visa-form .visa-address-field textarea:focus{outline:2px solid #bae6fd;border-color:#0ea5e9}</style>');
+document.head.insertAdjacentHTML('beforeend','<style>.visa-form .visa-address-fields{display:grid;gap:14px;margin-top:14px}.visa-form .visa-address-field,.visa-form .visa-address-fields label{display:flex;flex-direction:column;gap:7px;color:#475569;font-size:.78rem;font-weight:700}.visa-form .visa-address-field textarea,.visa-form .visa-address-fields input{min-height:48px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0d1b2a;font:500 .91rem DM Sans;padding:10px}.visa-form .visa-address-field textarea{min-height:88px;resize:vertical}.visa-form .visa-address-fields textarea:focus,.visa-form .visa-address-fields input:focus{outline:2px solid #bae6fd;border-color:#0ea5e9}</style>');
 document.querySelectorAll('#uae-visa-type,#turkey-visa-type,#japan-visa-type').forEach(select=>{
   const placeholder=select.querySelector('option[value=""]');
   if(!placeholder)return;
@@ -172,3 +172,11 @@ if(uaeVisaType&&uaeVisaSpeed&&uaeVisaDocs&&uaeVisaSubmit){
   uaeVisaSpeed.addEventListener('change',syncUaeDocuments);
   syncUaeDocuments();
 }
+window.addVisaAddressFields=form=>{
+  if(!form||form.querySelector('.visa-address-fields'))return;
+  const fields=document.createElement('div');
+  fields.className='visa-address-fields';
+  fields.innerHTML='<label class="visa-address-field"><span>Alamat lengkap</span><textarea name="address" rows="3" required placeholder="Masukkan alamat lengkap"></textarea></label><div class="field-grid"><label><span>Kota</span><input name="city" required autocomplete="address-level2"></label><label><span>Provinsi</span><input name="province" required autocomplete="address-level1"></label></div><label><span>Kode pos</span><input name="postalCode" required inputmode="numeric" pattern="[0-9]{4,10}" autocomplete="postal-code" placeholder="Contoh: 10110"></label>';
+  form.querySelector('.field-grid:nth-of-type(2)')?.insertAdjacentElement('afterend',fields);
+};
+window.addVisaAddressFields(document.querySelector('#uae-visa-form'));

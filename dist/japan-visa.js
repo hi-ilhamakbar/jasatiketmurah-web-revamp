@@ -40,10 +40,7 @@
       nationality.style.setProperty('--country-flag', `url("https://flagcdn.com/w40/${nationality.value.toLowerCase()}.png")`);
     });
   }
-  const addressField = document.createElement('label');
-  addressField.className = 'visa-address-field';
-  addressField.innerHTML = '<span>Alamat lengkap</span><textarea name="address" rows="3" required placeholder="Masukkan alamat lengkap"></textarea>';
-  form.querySelector('.field-grid:nth-of-type(2)')?.insertAdjacentElement('afterend', addressField);
+  window.addVisaAddressFields(form);
   form.querySelector('[name="phone"]').addEventListener('input', event => { event.target.value = event.target.value.replace(/\D/g, ''); });
   refresh();
   form.addEventListener('submit', async event => {
