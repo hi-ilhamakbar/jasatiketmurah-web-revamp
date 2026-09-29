@@ -199,3 +199,15 @@ const visaNationalityExclusions={'#uae-visa-form':'AE','#turkey-visa-form':'TR',
 const applyVisaNationalityExclusions=()=>Object.entries(visaNationalityExclusions).forEach(([formSelector,excludedCountry])=>{const nationality=document.querySelector(`${formSelector} [name="nationality"]`);if(!nationality)return;[...nationality.options].filter(option=>option.value===excludedCountry).forEach(option=>option.remove());let placeholder=nationality.querySelector('option[value=""]');if(!placeholder){placeholder=new Option('Pilih kewarganegaraan','',true,false);placeholder.disabled=true;nationality.prepend(placeholder)}if(!nationality.value||nationality.value===excludedCountry){nationality.value='';nationality.classList.remove('country-flag-select');nationality.style.removeProperty('--country-flag')}});
 applyVisaNationalityExclusions();
 document.querySelector('#language')?.addEventListener('change',()=>setTimeout(applyVisaNationalityExclusions));
+
+// Tour is fulfilled by our Klook affiliate partner. Keep both Tour entry points
+// aligned so visitors always arrive at the same destination.
+const klookTourAffiliateUrl='https://www.klook.com/?aid=7221&spm=CoBranding.Preview&clickId=630118ddb1&utm_medium=affiliate-alwayson&utm_source=non-network&utm_campaign=7221&utm_term=';
+document.querySelector('[data-service="tour"]')?.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  window.location.assign(klookTourAffiliateUrl);
+},{capture:true});
+document.querySelectorAll('.service-tile').forEach(tile=>{
+  if(tile.querySelector('[data-i18n="tour"]'))tile.href=klookTourAffiliateUrl;
+});
