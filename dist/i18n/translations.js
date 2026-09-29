@@ -1483,7 +1483,7 @@ window.JTM_I18N = {
   t(locale, key) {
     return (
       this.runtime[locale]?.[key] ??
-      this.runtime.en?.[key] ??
+      this.runtime.id?.[key] ??
       key
     );
   }
@@ -1527,5 +1527,19 @@ Object.assign(translationCatalogue['zh-Hant'], {charterTitle: '私人飛機包�
 translationCatalogue.lo = {...translationCatalogue.en, home: 'ໜ້າຫຼັກ', inspiration: 'ແຮງບັນດານໃຈ', about: 'ກ່ຽວກັບພວກເຮົາ', contact: 'ຕິດຕໍ່ພວກເຮົາ', login: 'ເຂົ້າສູ່ລະບົບ', heroTitle: 'ຈອງການເດີນທາງໄດ້ງ່າຍຂຶ້ນ', heroSub: 'ຖ້ຽວບິນ ໂຮງແຮມ ທົວ ວີຊາ ແລະ ການຮັບສົ່ງ ໃນບ່ອນດຽວ', flight: 'ຖ້ຽວບິນ', hotel: 'ໂຮງແຮມ', tour: 'ທົວ', visa: 'ວີຊາ', from: 'ຈາກ', to: 'ໄປຫາ', search: 'ຄົ້ນຫາ', charterIntro: 'ຈັດການເດີນທາງສ່ວນຕົວພາຍໃນ ຫຼື ຕ່າງປະເທດຕາມຕາຕະລາງຂອງທ່ານ. ສົ່ງຄວາມຕ້ອງການແລ້ວທີມງານຈະຕິດຕໍ່ທ່ານ.', tripType: 'ປະເພດການເດີນທາງ', pax: 'ຈຳນວນຜູ້ໂດຍສານ', specialRequest: 'ຄຳຮ້ອງຂໍພິເສດ', optional: '(ທາງເລືອກ)', requestSubmit: 'ສົ່ງຄຳຮ້ອງຂໍ'};
 runtimeTranslations.lo = {...runtimeTranslations.en, departure: 'ວັນທີເດີນທາງ', return: 'ວັນທີກັບຄືນ', passengers: 'ຜູ້ໂດຍສານ', oneWay: 'ຖ້ຽວດຽວ', roundTrip: 'ໄປ-ກັບ', multiCity: 'ຫຼາຍເມືອງ', search: 'ຄົ້ນຫາ'};
 window.JTM_I18N.languageNames.lo = 'ລາວ';
+
+/* Keep every supported locale in lockstep when new copy is added.  The check
+   runs after the shared page and visa copy below has been applied. */
+const requiredTranslationLocales = ['id','en','th','zh-Hans','zh-Hant','ja','ko','km','ms','my','pt','fil','tr','vi','lo'];
+const verifyTranslationCoverage = () => {
+  const pageKeys = Object.keys(translationCatalogue.id);
+  const runtimeKeys = Object.keys(runtimeTranslations.id);
+  const missing = requiredTranslationLocales.flatMap(locale => [
+    ...pageKeys.filter(key => !(key in (translationCatalogue[locale] || {}))).map(key => `page:${locale}.${key}`),
+    ...runtimeKeys.filter(key => !(key in (runtimeTranslations[locale] || {}))).map(key => `runtime:${locale}.${key}`)
+  ]);
+  if (missing.length) throw new Error(`Incomplete i18n catalogue: ${missing.join(', ')}`);
+};
+queueMicrotask(verifyTranslationCoverage);
 
 const visaCopy={visaKicker:'VISA SERVICES',visaCatalogueTitle:'Explore the world with clear visa services.',visaCatalogueSub:'Choose your destination. Requirements and process are shown before you apply.',visaSearchPlaceholder:'Search destination country',uaeName:'United Arab Emirates',visaAvailable:'Visa available',moreCountries:'More countries',comingSoon:'Coming soon',startApplication:'Start application →',backToVisa:'← All visa countries',uaeVisaTitle:'Apply for your UAE visa with ease.',uaeVisaSub:'Choose a visa and processing speed, upload documents, then continue with secure payment in Indonesian Rupiah.',chooseVisa:'Choose a visa',visaType:'Visa type',processingSpeed:'Processing speed',applicantCount:'Number of applicants',pricePerApplicant:'Price per applicant',total:'Total',applicationDetails:'Application details',caseNumberInfo:'Your JTM case number is created after submission.',nationality:'Nationality',visaConsent:'I agree to the processing of my data and documents for this visa application.'};Object.values(translationCatalogue).forEach(locale=>Object.assign(locale,visaCopy));Object.assign(translationCatalogue.id,{visaKicker:'LAYANAN VISA',visaCatalogueTitle:'Jelajahi dunia dengan layanan visa yang jelas.',visaCatalogueSub:'Pilih negara tujuan Anda. Persyaratan dan proses ditampilkan secara transparan sebelum Anda mengajukan aplikasi.',visaSearchPlaceholder:'Cari negara tujuan',uaeName:'Uni Emirat Arab',visaAvailable:'Visa tersedia',moreCountries:'Negara lainnya',comingSoon:'Segera hadir',startApplication:'Mulai aplikasi →',backToVisa:'← Semua negara visa',uaeVisaTitle:'Ajukan visa UAE dengan mudah.',uaeVisaSub:'Pilih visa dan kecepatan proses, unggah dokumen, lalu lanjutkan pembayaran aman dalam Rupiah.',chooseVisa:'Pilih jenis visa',visaType:'Jenis visa',processingSpeed:'Kecepatan proses',applicantCount:'Jumlah pemohon',pricePerApplicant:'Harga per pemohon',total:'Total',applicationDetails:'Detail aplikasi',caseNumberInfo:'Nomor kasus JTM akan dibuat saat aplikasi dikirim.',nationality:'Kewarganegaraan',visaConsent:'Saya menyetujui pemrosesan data dan dokumen untuk pengajuan visa ini.'});
