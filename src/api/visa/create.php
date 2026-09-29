@@ -73,6 +73,7 @@ if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountr
     $country === 'ID' && preg_match('/^id-e31h-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'guarantor-itas-itap'],
     $country === 'ID' && preg_match('/^id-e31j-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'sibling-itas-itap'],
     $country === 'ID' && $type === 'id-e33g-1' => [...$indonesiaLongBase, 'income-bank-account', 'employment-contract'],
+    $country === 'AU' && $type === 'australia-transit-771' => ['face', 'passport', 'ticket', 'hotel', 'destination-visa'],
     default => ['face', 'passport'],
 };
 
@@ -83,7 +84,7 @@ for ($applicant = 1; $applicant <= $quantity; $applicant++) {
             http_response_code(422);
             $message = $country === 'JP'
                 ? 'A passport bio page and endorsement page are required for every applicant.'
-                : ($country === 'ID' ? 'Please upload every required Indonesia visa document for each applicant.' : 'A face photo and passport bio page are required for every applicant.');
+                : ($country === 'ID' ? 'Please upload every required Indonesia visa document for each applicant.' : ($country === 'AU' ? 'Please upload every required Australia visa document for each applicant.' : 'A face photo and passport bio page are required for every applicant.'));
             exit(json_encode(['ok' => false, 'message' => $message]));
         }
     }
