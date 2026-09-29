@@ -41,7 +41,7 @@ $indonesiaC1 = ['normal' => 1800000, 'express' => 2800000, 'super-express' => 38
 $indonesiaFamilyOne = ['normal' => 13500000, 'express' => 15000000, 'super-express' => 17000000];
 $indonesiaFamilyTwo = ['normal' => 16500000, 'express' => 18000000, 'super-express' => 20000000];
 $indonesiaNomad = ['normal' => 12500000, 'express' => 15000000, 'super-express' => 17000000];
-$indonesiaPrices = ['id-b1' => $indonesiaB1, 'id-c1' => $indonesiaC1, 'id-e31a-1' => $indonesiaFamilyOne, 'id-e31a-2' => $indonesiaFamilyTwo, 'id-e31b-1' => $indonesiaFamilyOne, 'id-e31b-2' => $indonesiaFamilyTwo, 'id-e31c-1' => $indonesiaFamilyOne, 'id-e31c-2' => $indonesiaFamilyTwo, 'id-e31d-1' => $indonesiaFamilyOne, 'id-e31d-2' => $indonesiaFamilyTwo, 'id-e31e-1' => $indonesiaFamilyOne, 'id-e31e-2' => $indonesiaFamilyTwo, 'id-e31f-1' => $indonesiaFamilyOne, 'id-e31f-2' => $indonesiaFamilyTwo, 'id-e31g-1' => $indonesiaFamilyOne, 'id-e31g-2' => $indonesiaFamilyTwo, 'id-e31h-1' => $indonesiaFamilyOne, 'id-e31h-2' => $indonesiaFamilyTwo, 'id-e33g-1' => $indonesiaNomad];
+$indonesiaPrices = ['id-b1' => $indonesiaB1, 'id-c1' => $indonesiaC1, 'id-e31a-1' => $indonesiaFamilyOne, 'id-e31a-2' => $indonesiaFamilyTwo, 'id-e31b-1' => $indonesiaFamilyOne, 'id-e31b-2' => $indonesiaFamilyTwo, 'id-e31c-1' => $indonesiaFamilyOne, 'id-e31c-2' => $indonesiaFamilyTwo, 'id-e31d-1' => $indonesiaFamilyOne, 'id-e31d-2' => $indonesiaFamilyTwo, 'id-e31e-1' => $indonesiaFamilyOne, 'id-e31e-2' => $indonesiaFamilyTwo, 'id-e31f-1' => $indonesiaFamilyOne, 'id-e31f-2' => $indonesiaFamilyTwo, 'id-e31g-1' => $indonesiaFamilyOne, 'id-e31g-2' => $indonesiaFamilyTwo, 'id-e31h-1' => $indonesiaFamilyOne, 'id-e31h-2' => $indonesiaFamilyTwo, 'id-e31j-1' => $indonesiaFamilyOne, 'id-e31j-2' => $indonesiaFamilyTwo, 'id-e33g-1' => $indonesiaNomad];
 $validType = $country === 'TR'
     ? $type === 'turkey-single-30'
     : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : ($country === 'ID' ? isset($indonesiaPrices[$type]) : isset($prices[$type])));
@@ -56,14 +56,25 @@ if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountr
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
 }
 
+ $indonesiaLongBase = ['face', 'passport', 'ticket', 'bank-statement', 'curriculum-vitae'];
+ $documentKeys = match (true) {
+    $country === 'JP' => ['passport', 'endorsement'],
+    $country === 'ID' && $type === 'id-b1' => ['face', 'passport', 'ticket', 'hotel'],
+    $country === 'ID' && $type === 'id-c1' => ['face', 'passport', 'bank-statement'],
+    $country === 'ID' && preg_match('/^id-e31a-/', $type) === 1 => [...$indonesiaLongBase, 'spouse-application', 'marriage-record'],
+    $country === 'ID' && preg_match('/^id-e31b-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'marriage-record', 'spouse-itas-itap'],
+    $country === 'ID' && preg_match('/^id-e31[cd]-/', $type) === 1 => [...$indonesiaLongBase, 'family-card', 'birth-record', 'marriage-record'],
+    $country === 'ID' && preg_match('/^id-e31e-/', $type) === 1 => [...$indonesiaLongBase, 'marriage-record', 'parent-itas-itap'],
+    $country === 'ID' && preg_match('/^id-e31f-/', $type) === 1 => [...$indonesiaLongBase, 'family-card', 'court-decision'],
+    $country === 'ID' && preg_match('/^id-e31g-/', $type) === 1 => [...$indonesiaLongBase, 'family-card', 'birth-record'],
+    $country === 'ID' && preg_match('/^id-e31h-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'guarantor-itas-itap'],
+    $country === 'ID' && preg_match('/^id-e31j-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'sibling-itas-itap'],
+    $country === 'ID' && $type === 'id-e33g-1' => [...$indonesiaLongBase, 'income-bank-account', 'employment-contract'],
+    default => ['face', 'passport'],
+};
+
 for ($applicant = 1; $applicant <= $quantity; $applicant++) {
-    $requiredDocuments = match (true) {
-        $country === 'JP' => ["passport_$applicant", "endorsement_$applicant"],
-        $country === 'ID' && $type === 'id-b1' => ["face_$applicant", "passport_$applicant", "ticket_$applicant", "hotel_$applicant"],
-        $country === 'ID' && $type === 'id-c1' => ["face_$applicant", "passport_$applicant", "bank-statement_$applicant"],
-        $country === 'ID' && preg_match('/^id-e31a-/', $type) === 1 => ["face_$applicant", "passport_$applicant", "ticket_$applicant", "bank-statement_$applicant", "curriculum-vitae_$applicant", "spouse-application_$applicant", "marriage-record_$applicant"],
-        default => ["face_$applicant", "passport_$applicant"],
-    };
+    $requiredDocuments = array_map(static fn (string $key): string => "{$key}_{$applicant}", $documentKeys);
     foreach ($requiredDocuments as $required) {
         if (!isset($_FILES[$required]) || ($_FILES[$required]['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             http_response_code(422);
