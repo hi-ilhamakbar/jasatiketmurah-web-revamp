@@ -36,6 +36,7 @@ $prices = [
 ];
 $turkeyPrices = ['normal' => 1500000, 'express' => 2000000, 'super-express' => 2500000];
 $japanPrices = ['normal' => 250000, 'express' => 500000];
+$australiaPrices = ['australia-visitor-600' => 4100000, 'australia-transit-771' => 500000];
 $indonesiaB1 = ['normal' => 750000, 'express' => 1000000, 'super-express' => 1250000];
 $indonesiaC1 = ['normal' => 1800000, 'express' => 2800000, 'super-express' => 3800000];
 $indonesiaFamilyOne = ['normal' => 13500000, 'express' => 15000000, 'super-express' => 17000000];
@@ -44,13 +45,15 @@ $indonesiaNomad = ['normal' => 12500000, 'express' => 15000000, 'super-express' 
 $indonesiaPrices = ['id-b1' => $indonesiaB1, 'id-c1' => $indonesiaC1, 'id-e31a-1' => $indonesiaFamilyOne, 'id-e31a-2' => $indonesiaFamilyTwo, 'id-e31b-1' => $indonesiaFamilyOne, 'id-e31b-2' => $indonesiaFamilyTwo, 'id-e31c-1' => $indonesiaFamilyOne, 'id-e31c-2' => $indonesiaFamilyTwo, 'id-e31d-1' => $indonesiaFamilyOne, 'id-e31d-2' => $indonesiaFamilyTwo, 'id-e31e-1' => $indonesiaFamilyOne, 'id-e31e-2' => $indonesiaFamilyTwo, 'id-e31f-1' => $indonesiaFamilyOne, 'id-e31f-2' => $indonesiaFamilyTwo, 'id-e31g-1' => $indonesiaFamilyOne, 'id-e31g-2' => $indonesiaFamilyTwo, 'id-e31h-1' => $indonesiaFamilyOne, 'id-e31h-2' => $indonesiaFamilyTwo, 'id-e31j-1' => $indonesiaFamilyOne, 'id-e31j-2' => $indonesiaFamilyTwo, 'id-e33g-1' => $indonesiaNomad];
 $validType = $country === 'TR'
     ? $type === 'turkey-single-30'
-    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : ($country === 'ID' ? isset($indonesiaPrices[$type]) : isset($prices[$type])));
-$validSpeed = $country === 'ID'
+    : ($country === 'JP' ? $type === 'japan-waiver-multiple-15' : ($country === 'AU' ? isset($australiaPrices[$type]) : ($country === 'ID' ? isset($indonesiaPrices[$type]) : isset($prices[$type]))));
+$validSpeed = $country === 'AU'
+    ? $speed === 'normal'
+    : ($country === 'ID'
     ? isset($indonesiaPrices[$type][$speed])
-    : ($country === 'JP' ? in_array($speed, ['normal', 'express'], true) : in_array($speed, ['normal', 'express', 'super-express'], true));
+    : ($country === 'JP' ? in_array($speed, ['normal', 'express'], true) : in_array($speed, ['normal', 'express', 'super-express'], true)));
 $validNationality = $country !== 'JP' || in_array($nationality, ['ID', 'QA'], true);
 
-$requiresAddress = in_array($country, ['AE', 'TR', 'JP', 'ID'], true);
+$requiresAddress = in_array($country, ['AE', 'TR', 'JP', 'ID', 'AU'], true);
 if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountry || !$phone || !$nationality || ($requiresAddress && (!$address || !$city || !$province || !preg_match('/^[0-9]{4,10}$/', $postalCode))) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     exit(json_encode(['ok' => false, 'message' => 'Please complete the required details.']));
@@ -70,6 +73,7 @@ if (!$validType || !$validSpeed || !$validNationality || !$name || !$phoneCountr
     $country === 'ID' && preg_match('/^id-e31h-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'guarantor-itas-itap'],
     $country === 'ID' && preg_match('/^id-e31j-/', $type) === 1 => [...$indonesiaLongBase, 'guarantor-commitment', 'birth-record', 'sibling-itas-itap'],
     $country === 'ID' && $type === 'id-e33g-1' => [...$indonesiaLongBase, 'income-bank-account', 'employment-contract'],
+    $country === 'AU' && $type === 'australia-transit-771' => ['face', 'passport', 'ticket', 'hotel', 'destination-visa'],
     default => ['face', 'passport'],
 };
 
@@ -80,14 +84,14 @@ for ($applicant = 1; $applicant <= $quantity; $applicant++) {
             http_response_code(422);
             $message = $country === 'JP'
                 ? 'A passport bio page and endorsement page are required for every applicant.'
-                : ($country === 'ID' ? 'Please upload every required Indonesia visa document for each applicant.' : 'A face photo and passport bio page are required for every applicant.');
+                : ($country === 'ID' ? 'Please upload every required Indonesia visa document for each applicant.' : ($country === 'AU' ? 'Please upload every required Australia visa document for each applicant.' : 'A face photo and passport bio page are required for every applicant.'));
             exit(json_encode(['ok' => false, 'message' => $message]));
         }
     }
 }
 
 $surcharge = $speed === 'express' ? 500000 : ($speed === 'super-express' ? 1200000 : 0);
-$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($country === 'ID' ? $indonesiaPrices[$type][$speed] : ($prices[$type] + $surcharge)));
+$unitPrice = $country === 'TR' ? $turkeyPrices[$speed] : ($country === 'JP' ? $japanPrices[$speed] : ($country === 'AU' ? $australiaPrices[$type] : ($country === 'ID' ? $indonesiaPrices[$type][$speed] : ($prices[$type] + $surcharge))));
 $total = $unitPrice * $quantity;
 $case = 'JTMV' . time() . random_int(10, 99);
 $directory = rtrim($storage, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $case;
@@ -133,7 +137,7 @@ $record = [
 ];
 file_put_contents($directory . DIRECTORY_SEPARATOR . 'application.json', json_encode($record, JSON_PRETTY_PRINT), LOCK_EX);
 
-$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : ($country === 'ID' ? 'Indonesia' : 'UAE'));
+$countryName = $country === 'TR' ? 'Turkey' : ($country === 'JP' ? 'Japan' : ($country === 'AU' ? 'Australia' : ($country === 'ID' ? 'Indonesia' : 'UAE')));
 $subject = "Jasa Tiket Murah — $countryName Visa application $case";
 $body = '<h2>Application received</h2><p>Your ' . $countryName . ' visa application reference is <b>' . htmlspecialchars($case, ENT_QUOTES, 'UTF-8') . '</b>.</p><p>Status: <b>SUBMITTED</b><br>Total: <b>Rp' . number_format($total, 0, ',', '.') . '</b></p>';
 $headers = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: noreply@jasatiketmurah.com\r\nCc: cs@jasatiketmurah.com\r\nBcc: jasatiketmurah@gmail.com";
