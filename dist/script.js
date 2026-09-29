@@ -205,8 +205,9 @@ document.querySelector('#language')?.addEventListener('change',()=>setTimeout(ap
 const klookTourAffiliateUrl='https://www.klook.com/?aid=7221&spm=CoBranding.Preview&clickId=630118ddb1&utm_medium=affiliate-alwayson&utm_source=non-network&utm_campaign=7221&utm_term=';
 document.querySelector('[data-service="tour"]')?.addEventListener('click',event=>{
   event.preventDefault();
+  event.stopImmediatePropagation();
   window.location.assign(klookTourAffiliateUrl);
-});
+},{capture:true});
 document.querySelectorAll('.service-tile').forEach(tile=>{
   if(tile.querySelector('[data-i18n="tour"]'))tile.href=klookTourAffiliateUrl;
 });
