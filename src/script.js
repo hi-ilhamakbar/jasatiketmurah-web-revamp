@@ -205,3 +205,73 @@ if(!document.querySelector('script[data-jtm-flight-search]')){
 }
 const flightDeparture=document.querySelector('#travel-date'),flightReturn=document.querySelector('#return-date');
 if(flightDeparture&&flightReturn){const syncFlightDates=()=>{flightReturn.min=flightDeparture.value||new Date().toISOString().slice(0,10);if(flightReturn.value&&flightReturn.value<flightReturn.min)flightReturn.value=flightReturn.min};flightDeparture.addEventListener('input',syncFlightDates);flightDeparture.addEventListener('change',syncFlightDates);syncFlightDates();}
+
+// Restore the compact flight-search layout that existed before the visa merge.
+// The grouping is presentation-only: the original inputs and API values remain intact.
+if(bookingForm&&!bookingForm.dataset.compactFlightLayout){
+  bookingForm.dataset.compactFlightLayout='true';
+  const originLabel=document.querySelector('#origin')?.closest('label');
+  const destinationLabel=document.querySelector('#destination')?.closest('label');
+  const swap=document.querySelector('.swap');
+  const departureLabel=document.querySelector('#travel-date')?.closest('label');
+  const returnLabel=document.querySelector('#return-date')?.closest('label');
+  const cabinSelect=document.querySelector('#booking-class');
+
+  if(originLabel&&destinationLabel&&swap&&!bookingForm.querySelector('.flight-route-fields')){
+    const route=document.createElement('div');
+    route.className='flight-route-fields';
+    bookingForm.insertBefore(route,originLabel);
+    route.append(originLabel,swap,destinationLabel);
+  }
+  if(departureLabel&&returnLabel&&!bookingForm.querySelector('.flight-date-fields')){
+    const dates=document.createElement('div');
+    dates.className='flight-date-fields';
+    bookingForm.insertBefore(dates,departureLabel);
+    dates.append(departureLabel,returnLabel);
+  }
+  if(cabinSelect&&!bookingForm.querySelector('.cabin-pills')){
+    cabinSelect.closest('label')?.classList.add('cabin-field');
+    const cabinPills=document.createElement('div');
+    cabinPills.className='cabin-pills';
+    const options=[['Ekonomi','Economy'],['Ekonomi Premium','Premium'],['Bisnis','Business'],['Kelas Utama / Suites','First']];
+    cabinPills.innerHTML=options.map(([value,label],index)=>`<button type="button" data-cabin="${value}" class="${index===0?'active':''}">${label}</button>`).join('');
+    cabinSelect.after(cabinPills);
+    cabinPills.addEventListener('click',event=>{
+      const button=event.target.closest('[data-cabin]');
+      if(!button)return;
+      cabinSelect.value=button.dataset.cabin;
+      cabinSelect.dispatchEvent(new Event('change',{bubbles:true}));
+      cabinPills.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===button));
+    });
+  }
+}
+document.head.insertAdjacentHTML('beforeend',`<style>
+  .booking-hero{padding:56px 0 74px}
+  .booking-hero .search-card{padding:0 20px 18px;border-radius:16px;border-top:4px solid #ffd700;box-shadow:0 18px 42px rgba(13,27,42,.24)}
+  .booking-hero .trip-types{padding:14px 0 12px;border-bottom:1px solid #dbe3ec;gap:22px}
+  .booking-hero .trip-types input{accent-color:#f2b900}.booking-hero .direct-choice{margin-left:auto}
+  .booking-hero .search-form{display:grid!important;grid-template-columns:minmax(0,1.65fr) minmax(170px,.65fr) minmax(210px,1fr)!important;gap:14px;padding-top:14px}
+  .booking-hero .search-form>.flight-route-fields,.booking-hero .search-form>.flight-date-fields,.booking-hero .search-form>label:has(.traveller-trigger),.booking-hero .search-form>label:has(#booking-class),.booking-hero .search-form>.primary-button{grid-column:auto!important}
+  .flight-route-fields{display:grid;grid-template-columns:1fr 28px 1fr;align-items:end;border:1px solid #cbd5e1;border-radius:12px;background:#fff;overflow:visible}
+  .flight-route-fields label{padding:7px 10px;min-width:0}.flight-route-fields label+label{border-left:1px solid #dbe3ec}
+  .flight-route-fields input{height:30px!important;border:0!important;background:transparent!important;padding:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .flight-route-fields .swap{width:28px;height:28px;border:0;border-radius:0;background:transparent;color:#6b7280}
+  .flight-date-fields{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:12px;overflow:hidden}
+  .flight-date-fields label{padding:7px 10px;min-width:0}.flight-date-fields label+label{border-left:1px solid #dbe3ec}
+  .flight-date-fields input{height:30px!important;border:0!important;background:transparent!important;padding:0!important}
+  .booking-hero .search-form>label:has(.traveller-trigger){border:1px solid #cbd5e1;border-radius:12px;padding:7px 10px}
+  .booking-hero .traveller-trigger{height:30px;border:0;background:transparent;padding:0;width:100%;font-size:.9rem}
+  .cabin-field>small,.cabin-field>select{display:none}.cabin-pills{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #d3dce7;border-radius:12px;overflow:hidden;height:48px}
+  .cabin-pills button{border:0;border-right:1px solid #e4eaf1;background:#fff;color:#0d1b2a;font:500 .88rem DM Sans;cursor:pointer}.cabin-pills button:last-child{border-right:0}.cabin-pills button.active{box-shadow:inset 0 -3px #ffd529;font-weight:700}
+  .booking-hero .search-form>.primary-button{height:48px;background:#ffdb4d;color:#172033;box-shadow:none;border-radius:12px}.booking-hero .search-form>.primary-button:hover{background:#f6ca27}
+  .booking-hero .group-booking-inline{grid-column:1/-1;background:transparent;border:0;padding:0;color:#eaf5fb}
+  @media(max-width:900px){.booking-hero .search-form{grid-template-columns:1fr 1fr!important}.booking-hero .search-form>.flight-route-fields{grid-column:span 2!important}.booking-hero .search-form>.primary-button{grid-column:span 1!important}}
+  @media(max-width:620px){.booking-hero .search-card{padding:0 13px 15px}.booking-hero .trip-types{gap:13px;overflow:auto}.booking-hero .direct-choice{display:none!important}.booking-hero .search-form{grid-template-columns:1fr!important;gap:10px}.booking-hero .search-form>.flight-route-fields,.booking-hero .search-form>.flight-date-fields,.booking-hero .search-form>.primary-button{grid-column:auto!important}.flight-route-fields{grid-template-columns:1fr 24px 1fr}.cabin-pills button{font-size:.76rem}}
+  @media(min-width:901px){.booking-hero .search-form>.cabin-field{grid-column:span 2!important}.booking-hero .search-form>.primary-button{grid-column:3!important;grid-row:2!important;align-self:stretch}.booking-hero .search-form>.group-booking-inline{grid-column:1/-1!important;color:#eaf5fb!important;margin-top:-2px}}
+  .booking-hero .search-card{border-top:1px solid #dce7ed}.booking-hero .search-form>.primary-button{background:#1e3a8a;color:#fff}.booking-hero .search-form>.primary-button:hover{background:#142f72}
+  .flight-date-fields:has(.return-date input:disabled){grid-template-columns:1fr}.flight-date-fields .return-date:has(input:disabled){display:none}
+  .booking-hero .group-booking-inline{background:#eff6ff!important;border:1px solid #bfdbfe!important;border-radius:7px!important;padding:10px 13px!important;color:#0d3a7a!important;margin-top:0!important}
+  @media(min-width:901px){.booking-hero .search-form{grid-template-columns:minmax(0,1.5fr) minmax(240px,.9fr) minmax(180px,.75fr)!important}.booking-hero .search-form>.group-booking-inline{color:#0d3a7a!important}}
+  @media(min-width:621px){.flight-route-fields,.flight-date-fields,.booking-hero .search-form>label:has(.traveller-trigger){height:68px}.booking-hero .search-form>label:has(.traveller-trigger){align-self:end;justify-content:center;gap:2px}.flight-route-fields .swap{align-self:end;margin-bottom:7px}}
+  @media(max-width:620px){.flight-date-fields:has(.return-date input:disabled){grid-template-columns:1fr}}
+</style>`);
