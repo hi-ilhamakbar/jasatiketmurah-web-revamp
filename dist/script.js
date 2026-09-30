@@ -272,5 +272,6 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   .flight-date-fields:has(.return-date input:disabled){grid-template-columns:1fr}.flight-date-fields .return-date:has(input:disabled){display:none}
   .booking-hero .group-booking-inline{background:#eff6ff!important;border:1px solid #bfdbfe!important;border-radius:7px!important;padding:10px 13px!important;color:#0d3a7a!important;margin-top:0!important}
   @media(min-width:901px){.booking-hero .search-form{grid-template-columns:minmax(0,1.5fr) minmax(240px,.9fr) minmax(180px,.75fr)!important}.booking-hero .search-form>.group-booking-inline{color:#0d3a7a!important}}
+  @media(min-width:621px){.flight-route-fields,.flight-date-fields,.booking-hero .search-form>label:has(.traveller-trigger){height:68px}.booking-hero .search-form>label:has(.traveller-trigger){align-self:end;justify-content:center;gap:2px}.flight-route-fields .swap{align-self:end;margin-bottom:7px}}
   @media(max-width:620px){.flight-date-fields:has(.return-date input:disabled){grid-template-columns:1fr}}
 </style>`);
