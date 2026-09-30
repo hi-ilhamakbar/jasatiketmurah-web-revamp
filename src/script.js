@@ -201,7 +201,7 @@ applyVisaNationalityExclusions();
 document.querySelector('#language')?.addEventListener('change',()=>setTimeout(applyVisaNationalityExclusions));
 // Preserve the flight-search API, filtering, checkout, and summary modules on this branch.
 if(!document.querySelector('script[data-jtm-flight-search]')){
-  [['/airport-data.js',''],['/flight-search-api.js','jtmFlightSearch'],['/results-filters.js',''],['/flight-checkout.js',''],['/checkout-summary.js','']].forEach(([src,flag])=>{const script=document.createElement('script');script.src=src;script.async=false;if(flag)script.dataset.jtmFlightSearch='true';document.body.appendChild(script)});
+  [['/airport-data.js',''],['/flight-search-api.js','jtmFlightSearch'],['/flight-results-polish.js',''],['/results-filters-polish.js',''],['/flight-checkout.js',''],['/checkout-summary-polish.js','']].forEach(([src,flag])=>{const script=document.createElement('script');script.src=src;script.async=false;if(flag)script.dataset.jtmFlightSearch='true';document.body.appendChild(script)});
 }
 const flightDeparture=document.querySelector('#travel-date'),flightReturn=document.querySelector('#return-date');
 if(flightDeparture&&flightReturn){const syncFlightDates=()=>{flightReturn.min=flightDeparture.value||new Date().toISOString().slice(0,10);if(flightReturn.value&&flightReturn.value<flightReturn.min)flightReturn.value=flightReturn.min};flightDeparture.addEventListener('input',syncFlightDates);flightDeparture.addEventListener('change',syncFlightDates);syncFlightDates();}
