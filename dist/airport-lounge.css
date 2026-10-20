@@ -1,0 +1,13 @@
+.lounge-wrap { max-width: 920px; }
+.lounge-card { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: 0 16px 40px rgba(13, 27, 42, .10); }
+.lounge-banner { display: block; width: 100%; max-height: 345px; object-fit: cover; object-position: center; }
+.lounge-content { max-width: 700px; padding: 36px; }
+.lounge-eyebrow { margin: 0 0 8px; color: var(--blue); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.lounge-content h1 { margin: 0 0 8px; }
+.lounge-form { display: grid; gap: 18px; margin-top: 28px; }
+.lounge-form label { display: grid; gap: 7px; color: var(--navy); font-size: .9rem; font-weight: 700; }
+.lounge-form small { color: var(--slate); font-size: .8rem; font-weight: 400; line-height: 1.5; }
+.lounge-form input[type="file"] { padding: 11px; border: 1px dashed #94a3b8; border-radius: 7px; background: #f8fafc; }
+.lounge-form .primary-button { justify-self: start; }
+.lounge-honeypot { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+@media (max-width: 640px) { .lounge-content { padding: 24px 18px; } .lounge-banner { height: 145px; } .lounge-form .primary-button { width: 100%; } }
