@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Kirim voucher akses airport lounge kepada pelanggan.">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="stylesheet" href="/styles.css?v=af89ffe1e6d8">
+  <link rel="stylesheet" href="/airport-lounge.css">
+  <title>Airport Lounge Voucher | Jasa Tiket Murah</title>
+</head>
+<body>
+  <div id="site-header"><header class="site-header"><a class="brand" href="/"><img src="/assets/logo.png" alt="Jasa Tiket Murah"></a><nav class="main-nav"><a href="/">Beranda</a><a href="/inspiration/">Inspirasi</a><a href="/about/">Tentang kami</a><a href="/contact/">Hubungi kami</a></nav></header></div>
+  <main class="page lounge-page">
+    <div class="wrap lounge-wrap">
+      <section class="lounge-card" aria-labelledby="lounge-title">
+        <img class="lounge-banner" src="/assets/banner.png" alt="Jasa Tiket Murah global travel services">
+        <div class="lounge-content">
+          <p class="lounge-eyebrow">Airport lounge</p>
+          <h1 id="lounge-title">Kirim voucher lounge</h1>
+          <p class="page-lead">Isi data pelanggan dan lampirkan voucher untuk dikirimkan melalui email.</p>
+          <form id="airport-lounge-form" class="lounge-form" enctype="multipart/form-data" novalidate>
+            <label>
+              <span>Nama pelanggan</span>
+              <input name="customerName" type="text" autocomplete="name" required>
+            </label>
+            <label>
+              <span>Email pelanggan</span>
+              <input name="customerEmail" type="email" autocomplete="email" required>
+            </label>
+            <label>
+              <span>Lampiran voucher</span>
+              <input name="attachments[]" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple required>
+              <small>Anda dapat memilih beberapa berkas sekaligus. Format yang diterima: PDF, JPG, dan PNG.</small>
+            </label>
+            <label class="lounge-honeypot" aria-hidden="true">
+              <span>Website</span>
+              <input name="website" type="text" tabindex="-1" autocomplete="off">
+            </label>
+            <button class="primary-button" type="submit">Kirim email voucher</button>
+            <p id="airport-lounge-feedback" class="form-feedback" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/i18n/translations.js?v=af89ffe1e6d8"></script><script src="/script.js?v=af89ffe1e6d8"></script>
+  <script src="/airport-lounge.js"></script>
+</body>
+</html>
